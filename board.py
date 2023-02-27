@@ -555,57 +555,78 @@ def check(board, king):
 # Check if the requested move is a castle and if so, make the move
 def castle(board, userInput):
 
+    newBoard = board
+    answer = False
+
     if whiteTurn:
-        isInCheck = check(board, "wK")
+        isInCheck = check(newBoard, "wK")
+
+        if isInCheck:
+            print("Invalid move, try again!")
+            return newBoard, False
 
 
     if userInput == "O-O":
         if whiteTurn:
-            if board[7][4] == "wK" and board[7][7] == "wR" and board[7][5] == ". " and board[7][6] == ". ":
-                board[7][4] = ". "
-                board[7][5] = "wK"
-                board[7][6] = "wR"
-                board[7][7] = ". "
-                return board, True
+            if newBoard[7][4] == "wK" and newBoard[7][7] == "wR" and newBoard[7][5] == ". " and newBoard[7][6] == ". ":
+                newBoard[7][4] = ". "
+                newBoard[7][5] = "wK"
+                newBoard[7][6] = "wR"
+                newBoard[7][7] = ". "
+                answer = True
 
             else:
                 print("Invalid move!")
 
         else:
-            if board[0][4] == "bK" and board[0][7] == "bR" and board[0][5] == ". " and board[0][6] == ". ":
-                board[0][4] = ". "
-                board[0][5] = "bK"
-                board[0][6] = "bR"
-                board[0][7] = ". "
-                return board, True
+            if newBoard[0][4] == "bK" and newBoard[0][7] == "bR" and newBoard[0][5] == ". " and newBoard[0][6] == ". ":
+                newBoard[0][4] = ". "
+                newBoard[0][5] = "bK"
+                newBoard[0][6] = "bR"
+                newBoard[0][7] = ". "
+                answer = True
 
             else:
                 print("Invalid move!")
 
     elif userInput == "O-O-O":
         if whiteTurn:
-            if board[7][4] == "wK" and board[7][0] == "wR" and board[7][1] == ". " and board[7][2] == ". " and board[7][3] == ". ":
-                board[7][4] = ". "
-                board[7][3] = "wK"
-                board[7][2] = "wR"
-                board[7][0] = ". "
-                return board, True
+            if newBoard[7][4] == "wK" and newBoard[7][0] == "wR" and newBoard[7][1] == ". " and newBoard[7][2] == ". " and newBoard[7][3] == ". ":
+                newBoard[7][4] = ". "
+                newBoard[7][3] = "wK"
+                newBoard[7][2] = "wR"
+                newBoard[7][0] = ". "
+                answer = True
 
             else:
                 print("Invalid move!")
 
         else:
-            if board[0][4] == "bK" and board[0][0] == "bR" and board[0][1] == ". " and board[0][2] == ". " and board[0][3] == ". ":
-                board[0][4] = ". "
-                board[0][3] = "bK"
-                board[0][2] = "bR"
-                board[0][0] = ". "
-                return board, True
+            if newBoard[0][4] == "bK" and newBoard[0][0] == "bR" and newBoard[0][1] == ". " and newBoard[0][2] == ". " and newBoard[0][3] == ". ":
+                newBoard[0][4] = ". "
+                newBoard[0][3] = "bK"
+                newBoard[0][2] = "bR"
+                newBoard[0][0] = ". "
+                answer = True
 
             else:
                 print("Invalid move!")
 
-    return board, False
+    if answer:
+        if whiteTurn:
+            if check(newBoard, "wK"):
+                print("Invalid move, try again!")
+                return board, False
+            else:
+                return newBoard, answer
+        else:
+            if check(newBoard, "bK"):
+                print("Invalid move, try again!")
+                return board, False
+            else:
+                return newBoard, answer
+
+    return board, answer
 
 
 userInput = None
