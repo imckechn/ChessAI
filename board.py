@@ -30,10 +30,10 @@ def get_moves(input):
         start = positions[0]
         end = positions[1]
 
-        startColumn = start[0]
+        startColumn = start[0].upper()
         startRow = start[1]
 
-        endColumn = end[0]
+        endColumn = end[0].upper()
         endRow = end[1]
 
         return startColumn, startRow, endColumn, endRow
@@ -93,6 +93,7 @@ def makeMove(board, startColumn, startRow, endColumn, endRow):
 
 
 def validateMove(board, startColumn, startRow, endColumn, endRow):
+
     if board[startRow][startColumn] == ". ":
         return False
 
@@ -120,7 +121,7 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
                 return True
 
         # If there is a piece diagonal to it fowards it can take the piece
-        elif endRow == startRow + 1 and (endColumn == startColumn + 1 or endColumn == startColumn - 1):
+        if endRow == startRow + 1 and (endColumn == startColumn + 1 or endColumn == startColumn - 1):
             if 'b' in board[endRow][endColumn]:
                 return True
 
@@ -131,11 +132,11 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
             elif endRow == 4 and board[endRow][endColumn] == ". " and board[5][startColumn] == ". ":
                 return True
 
-        elif startRow != 6:
+        if startRow != 6:
             if endRow == startRow - 1 and board[endRow][endColumn] == ". ":
                 return True
 
-        elif endRow == startRow - 1 and (endColumn == startColumn + 1 or endColumn == startColumn - 1):
+        if endRow == startRow - 1 and (endColumn == startColumn + 1 or endColumn == startColumn - 1):
             if 'w' in board[endRow][endColumn]:
                 return True
 
@@ -174,8 +175,8 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
             return True
 
     # Conditions for a bishop
-    if board[startRow][startColumn] == 'wB' or board[endRow][endColumn] == 'bB':
-        if abs(startRow - endRow) == abs(startColumn - endColumn):
+    if board[startRow][startColumn] == 'wB' or board[startRow][startColumn] == 'bB':
+        if abs(startRow - endRow) == abs(startColumn - endColumn): #Check that it's on a diagonal
             if startRow < endRow and startColumn < endColumn:
                 for i in range(1, abs(startRow - endRow)):
                     if board[startRow + i][startColumn + i] != ". ":
@@ -205,7 +206,6 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
                 for i in range(startColumn - 1, endColumn -1, -1):
                     if board[startRow][i] != ". ":
                         return False
-
             return True
 
         elif startColumn == endColumn:
@@ -251,3 +251,14 @@ userInput = None
 board = create_board()
 while userInput != "quit":
     print_board(board)
+    userInput = input("Enter your move: ")
+
+    if userInput == "quit":
+        break
+
+    startColumn, startRow, endColumn, endRow = get_moves(userInput)
+
+    ans = makeMove(board, startColumn, startRow, endColumn, endRow)
+
+    if not ans:
+        print("Invalid move!")
