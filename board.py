@@ -1,4 +1,8 @@
 
+# Global Variables
+whiteTurn = True
+
+
 # Creates the initial board, its a board contaning a bunch of strings indicating the positions
 def create_board():
     board = [
@@ -25,6 +29,11 @@ def print_board(board):
 
 # Given an input from the user, this splits it up into the starting column, starting row, ending column, and ending row, if the input is invalid, it returns false
 def get_moves(input):
+    if input ==  "0-0":
+        return "castleRight"
+    elif input == "0-0-0":
+        return "castleLeft"
+
     try:
         positions = input.split(" ")
         start = positions[0]
@@ -81,9 +90,49 @@ def makeMove(board, startColumn, startRow, endColumn, endRow):
     endRow = int(endRow) - 1
 
     if validateMove(board, startColumn, startRow, endColumn, endRow):
+
         piece = board[startRow][startColumn]
         board[startRow][startColumn] = ". "
-        board[endRow][endColumn] = piece
+
+        #Check if it's a promotion
+        if piece == "wP" and endRow == 7:
+             while(True):
+                newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
+
+                if newPiece == "queen":
+                    board[endRow][endColumn] = "wQ"
+                    break
+                elif newPiece == "rook":
+                    board[endRow][endColumn] = "wR"
+                    break
+                elif newPiece == "bishop":
+                    board[endRow][endColumn] = "wB"
+                    break
+                elif newPiece == "knight":
+                    board[endRow][endColumn] = "wN"
+                    break
+                else:
+                    print("Invalid Piece")
+        elif piece == "bP" and endRow == 0:
+             while(True):
+                newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
+
+                if newPiece == "queen":
+                    board[endRow][endColumn] = "bQ"
+                    break
+                elif newPiece == "rook":
+                    board[endRow][endColumn] = "bR"
+                    break
+                elif newPiece == "bishop":
+                    board[endRow][endColumn] = "bB"
+                    break
+                elif newPiece == "knight":
+                    board[endRow][endColumn] = "bN"
+                    break
+                else:
+                    print("Invalid Piece")
+        else:
+            board[endRow][endColumn] = piece
 
         return board
 
@@ -107,23 +156,47 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
 
     #Conditions for a pawn
     if board[startRow][startColumn] == "wP":
+        answer = False
 
         #If it's in the start row, it can move forward 1 or 2 spaces
         if startRow == 1:
             if endRow == 2 and board[endRow][endColumn] == ". ":
-                return True
+                answer = True
             elif endRow == 3 and board[endRow][endColumn] == ". " and board[2][startColumn] == ". ":
-                return True
+                answer = True
 
         # If it's not in the start row, it can only move forward 1 space
         elif startRow != 1:
             if endRow == startRow + 1 and board[endRow][endColumn] == ". ":
-                return True
+                answer = True
 
         # If there is a piece diagonal to it fowards it can take the piece
         if endRow == startRow + 1 and (endColumn == startColumn + 1 or endColumn == startColumn - 1):
             if 'b' in board[endRow][endColumn]:
-                return True
+                answer = True
+
+        # Handle Promotion
+        if answer == True and endRow == 7:
+            while(True):
+                newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
+
+                if newPiece == "queen":
+                    board[endRow][endColumn] = "wQ"
+                    break
+                elif newPiece == "rook":
+                    board[endRow][endColumn] = "wR"
+                    break
+                elif newPiece == "bishop":
+                    board[endRow][endColumn] = "wB"
+                    break
+                elif newPiece == "knight":
+                    board[endRow][endColumn] = "wN"
+                    break
+                else:
+                    print("Invalid Piece")
+
+        return answer
+
 
     elif board[startRow][startColumn] == "bP":
         if startRow == 6:
@@ -247,6 +320,294 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
     return False
 
 
+# Check if the king is in check
+def check(board, king):
+    kingRow = None
+    kingColumn = None
+
+    #find the king
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] == king:
+                kingRow = i
+                kingColumn = j
+
+    #Check if the king is in check by a pawn
+    if king == "wK":
+        if kingRow != 0 and kingColumn != 0:
+            if board[kingRow - 1][kingColumn - 1] == "bP":
+                return True
+        if kingRow != 0 and kingColumn != 7:
+            if board[kingRow - 1][kingColumn + 1] == "bP":
+                return True
+    else:
+        if kingRow != 7 and kingColumn != 0:
+            if board[kingRow + 1][kingColumn - 1] == "wP":
+                return True
+        if kingRow != 7 and kingColumn != 7:
+            if board[kingRow + 1][kingColumn + 1] == "wP":
+                return True
+
+    #Check if the king is in check by a knight
+    if king == "wK":
+        if kingRow + 1 < 8 and kingColumn + 2 < 8:
+            if board[kingRow + 1][kingColumn + 2] == "bN":
+                return True
+        if kingRow + 1 < 8 and kingColumn - 2 >= 0:
+            if board[kingRow + 1][kingColumn - 2] == "bN":
+                return True
+        if kingRow - 1 >= 0 and kingColumn + 2 < 8:
+            if board[kingRow - 1][kingColumn + 2] == "bN":
+                return True
+        if kingRow - 1 >= 0 and kingColumn - 2 >= 0:
+            if board[kingRow - 1][kingColumn - 2] == "bN":
+                return True
+        if kingRow + 2 < 8 and kingColumn + 1 < 8:
+            if board[kingRow + 2][kingColumn + 1] == "bN":
+                return True
+        if kingRow + 2 < 8 and kingColumn - 1 >= 0:
+            if board[kingRow + 2][kingColumn - 1] == "bN":
+                return True
+        if kingRow - 2 >= 0 and kingColumn + 1 < 8:
+            if board[kingRow - 2][kingColumn + 1] == "bN":
+                return True
+        if kingRow - 2 >= 0 and kingColumn - 1 >= 0:
+            if board[kingRow - 2][kingColumn - 1] == "bN":
+                return True
+    else:
+        if kingRow + 1 < 8 and kingColumn + 2 < 8:
+            if board[kingRow + 1][kingColumn + 2] == "wN":
+                return True
+        if kingRow + 1 < 8 and kingColumn - 2 >= 0:
+            if board[kingRow + 1][kingColumn - 2] == "wN":
+                return True
+        if kingRow - 1 >= 0 and kingColumn + 2 < 8:
+            if board[kingRow - 1][kingColumn + 2] == "wN":
+                return True
+        if kingRow - 1 >= 0 and kingColumn - 2 >= 0:
+            if board[kingRow - 1][kingColumn - 2] == "wN":
+                return True
+        if kingRow + 2 < 8 and kingColumn + 1 < 8:
+            if board[kingRow + 2][kingColumn + 1] == "wN":
+                return True
+        if kingRow + 2 < 8 and kingColumn - 1 >= 0:
+            if board[kingRow + 2][kingColumn - 1] == "wN":
+                return True
+        if kingRow - 2 >= 0 and kingColumn + 1 < 8:
+            if board[kingRow - 2][kingColumn + 1] == "wN":
+                return True
+        if kingRow - 2 >= 0 and kingColumn - 1 >= 0:
+            if board[kingRow - 2][kingColumn - 1] == "wN":
+                return True
+
+    #Check if the king is in check by a bishop or queen
+    if king == "wK":
+        for i in range(1, 8):
+            if kingRow + i < 8 and kingColumn + i < 8:
+                if board[kingRow + i][kingColumn + i] == "bB" or board[kingRow + i][kingColumn + i] == "bQ":
+                    return True
+                if board[kingRow + i][kingColumn + i] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingRow + i < 8 and kingColumn - i >= 0:
+                if board[kingRow + i][kingColumn - i] == "bB" or board[kingRow + i][kingColumn - i] == "bQ":
+                    return True
+                if board[kingRow + i][kingColumn - i] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingRow - i >= 0 and kingColumn + i < 8:
+                if board[kingRow - i][kingColumn + i] == "bB" or board[kingRow - i][kingColumn + i] == "bQ":
+                    return True
+                if board[kingRow - i][kingColumn + i] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingRow - i >= 0 and kingColumn - i >= 0:
+                if board[kingRow - i][kingColumn - i] == "bB" or board[kingRow - i][kingColumn - i] == "bQ":
+                    return True
+                if board[kingRow - i][kingColumn - i] != ". ":
+                    break
+            else:
+                break
+    else:
+        for i in range(1, 8):
+            if kingRow + i < 8 and kingColumn + i < 8:
+                if board[kingRow + i][kingColumn + i] == "wB" or board[kingRow + i][kingColumn + i] == "wQ":
+                    return True
+                if board[kingRow + i][kingColumn + i] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingRow + i < 8 and kingColumn - i >= 0:
+                if board[kingRow + i][kingColumn - i] == "wB" or board[kingRow + i][kingColumn - i] == "wQ":
+                    return True
+                if board[kingRow + i][kingColumn - i] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingRow - i >= 0 and kingColumn + i < 8:
+                if board[kingRow - i][kingColumn + i] == "wB" or board[kingRow - i][kingColumn + i] == "wQ":
+                    return True
+                if board[kingRow - i][kingColumn + i] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingRow - i >= 0 and kingColumn - i >= 0:
+                if board[kingRow - i][kingColumn - i] == "wB" or board[kingRow - i][kingColumn - i] == "wQ":
+                    return True
+                if board[kingRow - i][kingColumn - i] != ". ":
+                    break
+            else:
+                break
+
+    #Check if the king is in check by a rook or queen
+    if king == "wK":
+        for i in range(1, 8):
+            if kingRow + i < 8:
+                if board[kingRow + i][kingColumn] == "bR" or board[kingRow + i][kingColumn] == "bQ":
+                    return True
+                if board[kingRow + i][kingColumn] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingRow - i >= 0:
+                if board[kingRow - i][kingColumn] == "bR" or board[kingRow - i][kingColumn] == "bQ":
+                    return True
+                if board[kingRow - i][kingColumn] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingColumn + i < 8:
+                if board[kingRow][kingColumn + i] == "bR" or board[kingRow][kingColumn + i] == "bQ":
+                    return True
+                if board[kingRow][kingColumn + i] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingColumn - i >= 0:
+                if board[kingRow][kingColumn - i] == "bR" or board[kingRow][kingColumn - i] == "bQ":
+                    return True
+                if board[kingRow][kingColumn - i] != ". ":
+                    break
+            else:
+                break
+    else:
+        for i in range(1, 8):
+            if kingRow + i < 8:
+                if board[kingRow + i][kingColumn] == "wR" or board[kingRow + i][kingColumn] == "wQ":
+                    return True
+                if board[kingRow + i][kingColumn] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingRow - i >= 0:
+                if board[kingRow - i][kingColumn] == "wR" or board[kingRow - i][kingColumn] == "wQ":
+                    return True
+                if board[kingRow - i][kingColumn] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingColumn + i < 8:
+                if board[kingRow][kingColumn + i] == "wR" or board[kingRow][kingColumn + i] == "wQ":
+                    return True
+                if board[kingRow][kingColumn + i] != ". ":
+                    break
+            else:
+                break
+
+        for i in range(1, 8):
+            if kingColumn - i >= 0:
+                if board[kingRow][kingColumn - i] == "wR" or board[kingRow][kingColumn - i] == "wQ":
+                    return True
+                if board[kingRow][kingColumn - i] != ". ":
+                    break
+            else:
+                break
+
+    return False
+
+
+
+# Check if the requested move is a castle and if so, make the move
+def castle(board, userInput):
+
+    if whiteTurn:
+        isInCheck = check(board, "wK")
+
+
+    if userInput == "O-O":
+        if whiteTurn:
+            if board[7][4] == "wK" and board[7][7] == "wR" and board[7][5] == ". " and board[7][6] == ". ":
+                board[7][4] = ". "
+                board[7][5] = "wK"
+                board[7][6] = "wR"
+                board[7][7] = ". "
+                return board, True
+
+            else:
+                print("Invalid move!")
+
+        else:
+            if board[0][4] == "bK" and board[0][7] == "bR" and board[0][5] == ". " and board[0][6] == ". ":
+                board[0][4] = ". "
+                board[0][5] = "bK"
+                board[0][6] = "bR"
+                board[0][7] = ". "
+                return board, True
+
+            else:
+                print("Invalid move!")
+
+    elif userInput == "O-O-O":
+        if whiteTurn:
+            if board[7][4] == "wK" and board[7][0] == "wR" and board[7][1] == ". " and board[7][2] == ". " and board[7][3] == ". ":
+                board[7][4] = ". "
+                board[7][3] = "wK"
+                board[7][2] = "wR"
+                board[7][0] = ". "
+                return board, True
+
+            else:
+                print("Invalid move!")
+
+        else:
+            if board[0][4] == "bK" and board[0][0] == "bR" and board[0][1] == ". " and board[0][2] == ". " and board[0][3] == ". ":
+                board[0][4] = ". "
+                board[0][3] = "bK"
+                board[0][2] = "bR"
+                board[0][0] = ". "
+                return board, True
+
+            else:
+                print("Invalid move!")
+
+    return board, False
+
+
 userInput = None
 board = create_board()
 while userInput != "quit":
@@ -256,9 +617,13 @@ while userInput != "quit":
     if userInput == "quit":
         break
 
-    startColumn, startRow, endColumn, endRow = get_moves(userInput)
+    #Check if the move is a castle
+    if userInput == "O-O" or userInput == "O-O-O":
+        board, isCastle = castle(board, userInput)
 
-    ans = makeMove(board, startColumn, startRow, endColumn, endRow)
+    else:
+        startColumn, startRow, endColumn, endRow = get_moves(userInput)
+        ans = makeMove(board, startColumn, startRow, endColumn, endRow)
 
     if not ans:
         print("Invalid move!")
