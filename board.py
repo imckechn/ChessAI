@@ -1243,6 +1243,8 @@ def checkForStalemate(board):
                                 if canMove(board, k, l):
                                     return False
 
+                    return True
+
 
 
 userInput = None
