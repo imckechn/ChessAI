@@ -28,7 +28,7 @@ def print_board(board):
 
 
 # Given an input from the user, this splits it up into the starting column, starting row, ending column, and ending row, if the input is invalid, it returns false
-def get_moves(input):
+def get_moves_from_user_input(input):
     if input ==  "0-0":
         return "castleRight"
     elif input == "0-0-0":
@@ -139,6 +139,583 @@ def makeMove(board, startColumn, startRow, endColumn, endRow):
     else:
         return False
 
+
+#This checks if the piece at the given position has any avalible moves
+def canMove(board, x, y):
+    if listMoves(board, x, y) != []:
+        return True
+    else:
+        return False
+
+
+def listMoves(board, x, y):
+    moves = []
+
+
+    #White moves
+    if whiteTurn:
+
+    #Check if it's a pawn
+        if board[x][y] == "wP":
+
+            #If it's in the start row, it can move forward 1 or 2 spaces
+            if x == 1:
+                if board[x+1][y] == ". ":
+                    moves.append([x + 1, y])
+                if board[x+2][y] == ". ":
+                    moves.append([x + 2, y])
+
+            #Otherwise it can only move forward 1 space
+            else:
+                if board[x+1][y] == ". ":
+                    moves.append([x + 1, y])
+
+            #Check if it can capture
+            if y != 0:
+                if 'b' in board[x+1][y-1]:
+                    moves.append([x+1, y-1])
+            if y != 7:
+                if 'b' in board[x+1][y+1]:
+                    moves.append([x+1, y+1])
+
+        #Check if it's a rook
+        elif board[x][y] == "wR":
+
+            #Check up
+            for i in range(x-1, -1, -1):
+                if board[i][y] == ". ":
+                    moves.append([i, y])
+                elif 'b' in board[i][y]:
+                    moves.append([i, y])
+                    break
+                else:
+                    break
+
+            #Check down
+            for i in range(x+1, 8):
+                if board[i][y] == ". ":
+                    moves.append([i, y])
+                elif 'b' in board[i][y]:
+                    moves.append([i, y])
+                    break
+                else:
+                    break
+
+            #Check left
+            for i in range(y-1, -1, -1):
+                if board[x][i] == ". ":
+                    moves.append([x, i])
+                elif 'b' in board[x][i]:
+                    moves.append([x, i])
+                    break
+                else:
+                    break
+
+            #Check right
+            for i in range(y+1, 8):
+                if board[x][i] == ". ":
+                    moves.append([x, i])
+                elif 'b' in board[x][i]:
+                    moves.append([x, i])
+                    break
+                else:
+                    break
+
+        #Check if it's a knight
+        elif board[x][y] == "wN":
+
+            #Check up
+            if x > 1:
+                if y > 0:
+                    if board[x-2][y-1] == ". " or 'b' in board[x-2][y-1]:
+                        moves.append([x-2, y-1])
+                if y < 7:
+                    if board[x-2][y+1] == ". " or 'b' in board[x-2][y+1]:
+                        moves.append([x-2, y+1])
+
+            #Check down
+            if x < 6:
+                if y > 0:
+                    if board[x+2][y-1] == ". " or 'b' in board[x+2][y-1]:
+                        moves.append([x+2, y-1])
+                if y < 7:
+                    if board[x+2][y+1] == ". " or 'b' in board[x+2][y+1]:
+                        moves.append([x+2, y+1])
+
+            #Check left
+            if y > 1:
+                if x > 0:
+                    if board[x-1][y-2] == ". " or 'b' in board[x-1][y-2]:
+                        moves.append([x-1, y-2])
+                if x < 7:
+                    if board[x+1][y-2] == ". " or 'b' in board[x+1][y-2]:
+                        moves.append([x+1, y-2])
+
+            #Check right
+            if y < 6:
+                if x > 0:
+                    if board[x-1][y+2] == ". " or 'b' in board[x-1][y+2]:
+                        moves.append([x-1, y+2])
+                if x < 7:
+                    if board[x+1][y+2] == ". " or 'b' in board[x+1][y+2]:
+                        moves.append([x+1, y+2])
+
+        #Check if it's a bishop
+        elif board[x][y] == "wB":
+
+            #Check up and left
+            for i in range(1, 8):
+                if x-i < 0 or y-i < 0:
+                    break
+                if board[x-i][y-i] == ". ":
+                    moves.append([x-i, y-i])
+                elif 'b' in board[x-i][y-i]:
+                    moves.append([x-i, y-i])
+                    break
+                else:
+                    break
+
+            #Check up and right
+            for i in range(1, 8):
+                if x-i < 0 or y+i > 7:
+                    break
+                if board[x-i][y+i] == ". ":
+                    moves.append([x-i, y+i])
+                elif 'b' in board[x-i][y+i]:
+                    moves.append([x-i, y+i])
+                    break
+                else:
+                    break
+
+            #Check down and left
+            for i in range(1, 8):
+                if x+i > 7 or y-i < 0:
+                    break
+                if board[x+i][y-i] == ". ":
+                    moves.append([x+i, y-i])
+                elif 'b' in board[x+i][y-i]:
+                    moves.append([x+i, y-i])
+                    break
+                else:
+                    break
+
+            #Check down and right
+            for i in range(1, 8):
+                if x+i > 7 or y+i > 7:
+                    break
+                if board[x+i][y+i] == ". ":
+                    moves.append([x+i, y+i])
+                elif 'b' in board[x+i][y+i]:
+                    moves.append([x+i, y+i])
+                    break
+                else:
+                    break
+
+        #Check if it's a queen
+        elif board[x][y] == "wQ":
+
+            #Check up
+            for i in range(x-1, -1, -1):
+                if board[i][y] == ". ":
+                    moves.append([i, y])
+                elif 'b' in board[i][y]:
+                    moves.append([i, y])
+                    break
+                else:
+                    break
+
+            #Check down
+            for i in range(x+1, 8):
+                if board[i][y] == ". ":
+                    moves.append([i, y])
+                elif 'b' in board[i][y]:
+                    moves.append([i, y])
+                    break
+                else:
+                    break
+
+            #Check left
+            for i in range(y-1, -1, -1):
+                if board[x][i] == ". ":
+                    moves.append([x, i])
+                elif 'b' in board[x][i]:
+                    moves.append([x, i])
+                    break
+                else:
+                    break
+
+            #Check right
+            for i in range(y+1, 8):
+                if board[x][i] == ". ":
+                    moves.append([x, i])
+                elif 'b' in board[x][i]:
+                    moves.append([x, i])
+                    break
+                else:
+                    break
+
+            #Check up and left
+            for i in range(1, 8):
+                if x-i < 0 or y-i < 0:
+                    break
+                if board[x-i][y-i] == ". ":
+                    moves.append([x-i, y-i])
+                elif 'b' in board[x-i][y-i]:
+                    moves.append([x-i, y-i])
+                    break
+                else:
+                    break
+
+            #Check up and right
+            for i in range(1, 8):
+                if x-i < 0 or y+i > 7:
+                    break
+                if board[x-i][y+i] == ". ":
+                    moves.append([x-i, y+i])
+                elif 'b' in board[x-i][y+i]:
+                    moves.append([x-i, y+i])
+                    break
+                else:
+                    break
+
+            #Check down and left
+            for i in range(1, 8):
+                if x+i > 7 or y-i < 0:
+                    break
+                if board[x+i][y-i] == ". ":
+                    moves.append([x+i, y-i])
+
+        #Check if it's a king
+        elif board[x][y] == "wK":
+
+            #Check up
+            if x > 0:
+                if board[x-1][y] == ". " or 'b' in board[x-1][y]:
+                    moves.append([x-1, y])
+
+            #Check down
+            if x < 7:
+                if board[x+1][y] == ". " or 'b' in board[x+1][y]:
+                    moves.append([x+1, y])
+
+            #Check left
+            if y > 0:
+                if board[x][y-1] == ". " or 'b' in board[x][y-1]:
+                    moves.append([x, y-1])
+
+            #Check right
+            if y < 7:
+                if board[x][y+1] == ". " or 'b' in board[x][y+1]:
+                    moves.append([x, y+1])
+
+            #Check up and left
+            if x > 0 and y > 0:
+                if board[x-1][y-1] == ". " or 'b' in board[x-1][y-1]:
+                    moves.append([x-1, y-1])
+
+            #Check up and right
+            if x > 0 and y < 7:
+                if board[x-1][y+1] == ". " or 'b' in board[x-1][y+1]:
+                    moves.append([x-1, y+1])
+
+            #Check down and left
+            if x < 7 and y > 0:
+                if board[x+1][y-1] == ". " or 'b' in board[x+1][y-1]:
+                    moves.append([x+1, y-1])
+
+            #Check down and right
+            if x < 7 and y < 7:
+                if board[x+1][y+1] == ". " or 'b' in board[x+1][y+1]:
+                    moves.append([x+1, y+1])
+
+    #Black moves
+    else:
+
+        if board[x][y] == "bP":
+
+            #Check up
+            if x > 0:
+                if board[x-1][y] == ". ":
+                    moves.append([x-1, y])
+
+            #Check up and left
+            if x > 0 and y > 0:
+                if board[x-1][y-1] == ". ":
+                    moves.append([x-1, y-1])
+                elif 'w' in board[x-1][y-1]:
+                    moves.append([x-1, y-1])
+
+            #Check up and right
+            if x > 0 and y < 7:
+                if board[x-1][y+1] == ". ":
+                    moves.append([x-1, y+1])
+                elif 'w' in board[x-1][y+1]:
+                    moves.append([x-1, y+1])
+        
+        #Check if it's a rook
+        elif board[x][y] == "bR":
+
+            #Check up
+            for i in range(x-1, -1, -1):
+                if board[i][y] == ". ":
+                    moves.append([i, y])
+                elif 'w' in board[i][y]:
+                    moves.append([i, y])
+                    break
+                else:
+                    break
+
+            #Check down
+            for i in range(x+1, 8):
+                if board[i][y] == ". ":
+                    moves.append([i, y])
+                elif 'w' in board[i][y]:
+                    moves.append([i, y])
+                    break
+                else:
+                    break
+
+            #Check left
+            for i in range(y-1, -1, -1):
+                if board[x][i] == ". ":
+                    moves.append([x, i])
+                elif 'w' in board[x][i]:
+                    moves.append([x, i])
+                    break
+                else:
+                    break
+
+            #Check right
+            for i in range(y+1, 8):
+                if board[x][i] == ". ":
+                    moves.append([x, i])
+                elif 'w' in board[x][i]:
+                    moves.append([x, i])
+                    break
+                else:
+                    break
+
+        #Check if it's a knight
+        elif board[x][y] == "bN":
+
+            #Check up and left
+            if x > 1 and y > 0:
+                if board[x-2][y-1] == ". " or 'w' in board[x-2][y-1]:
+                    moves.append([x-2, y-1])
+
+            #Check up and right
+            if x > 1 and y < 7:
+                if board[x-2][y+1] == ". " or 'w' in board[x-2][y+1]:
+                    moves.append([x-2, y+1])
+
+            #Check down and left
+            if x < 6 and y > 0:
+                if board[x+2][y-1] == ". " or 'w' in board[x+2][y-1]:
+                    moves.append([x+2, y-1])
+
+            #Check down and right
+            if x < 6 and y < 7:
+                if board[x+2][y+1] == ". " or 'w' in board[x+2][y+1]:
+                    moves.append([x+2, y+1])
+
+            #Check left and up
+            if x > 0 and y > 1:
+                if board[x-1][y-2] == ". " or 'w' in board[x-1][y-2]:
+                    moves.append([x-1, y-2])
+
+            #Check left and down
+            if x < 7 and y > 1:
+                if board[x+1][y-2] == ". " or 'w' in board[x+1][y-2]:
+                    moves.append([x+1, y-2])
+
+            #Check right and up
+            if x > 0 and y < 6:
+                if board[x-1][y+2] == ". " or 'w' in board[x-1][y+2]:
+                    moves.append([x-1, y+2])
+
+            #Check right and down
+            if x < 7 and y < 6:
+                if board[x+1][y+2] == ". " or 'w' in board[x+1][y+2]:
+                    moves.append([x+1, y+2])
+
+        #Check if it's a bishop
+        elif board[x][y] == "bB":
+
+            #Check up and left
+            for i in range(1, 8):
+                if x-i >= 0 and y-i >= 0:
+                    if board[x-i][y-i] == ". ":
+                        moves.append([x-i, y-i])
+                    elif 'w' in board[x-i][y-i]:
+                        moves.append([x-i, y-i])
+                        break
+                    else:
+                        break
+
+            #Check up and right
+            for i in range(1, 8):
+                if x-i >= 0 and y+i < 8:
+                    if board[x-i][y+i] == ". ":
+                        moves.append([x-i, y+i])
+                    elif 'w' in board[x-i][y+i]:
+                        moves.append([x-i, y+i])
+                        break
+                    else:
+                        break
+
+            #Check down and left
+            for i in range(1, 8):
+                if x+i < 8 and y-i >= 0:
+                    if board[x+i][y-i] == ". ":
+                        moves.append([x+i, y-i])
+                    elif 'w' in board[x+i][y-i]:
+                        moves.append([x+i, y-i])
+                        break
+                    else:
+                        break
+
+            #Check down and right
+            for i in range(1, 8):
+                if x+i < 8 and y+i < 8:
+                    if board[x+i][y+i] == ". ":
+                        moves.append([x+i, y+i])
+                    elif 'w' in board[x+i][y+i]:
+                        moves.append([x+i, y+i])
+                        break
+                    else:
+                        break
+        
+        #Check if it's a queen
+        elif board[x][y] == "bQ":
+
+            #Check up
+            for i in range(x-1, -1, -1):
+                if board[i][y] == ". ":
+                    moves.append([i, y])
+                elif 'w' in board[i][y]:
+                    moves.append([i, y])
+                    break
+                else:
+                    break
+
+            #Check down
+            for i in range(x+1, 8):
+                if board[i][y] == ". ":
+                    moves.append([i, y])
+                elif 'w' in board[i][y]:
+                    moves.append([i, y])
+                    break
+                else:
+                    break
+
+            #Check left
+            for i in range(y-1, -1, -1):
+                if board[x][i] == ". ":
+                    moves.append([x, i])
+                elif 'w' in board[x][i]:
+                    moves.append([x, i])
+                    break
+                else:
+                    break
+
+            #Check right
+            for i in range(y+1, 8):
+                if board[x][i] == ". ":
+                    moves.append([x, i])
+                elif 'w' in board[x][i]:
+                    moves.append([x, i])
+                    break
+                else:
+                    break
+
+            #Check up and left
+            for i in range(1, 8):
+                if x-i >= 0 and y-i >= 0:
+                    if board[x-i][y-i] == ". ":
+                        moves.append([x-i, y-i])
+                    elif 'w' in board[x-i][y-i]:
+                        moves.append([x-i, y-i])
+                        break
+                    else:
+                        break
+
+            #Check up and right
+            for i in range(1, 8):
+                if x-i >= 0 and y+i < 8:
+                    if board[x-i][y+i] == ". ":
+                        moves.append([x-i, y+i])
+                    elif 'w' in board[x-i][y+i]:
+                        moves.append([x-i, y+i])
+                        break
+                    else:
+                        break
+
+            #Check down and left
+            for i in range(1, 8):
+                if x+i < 8 and y-i >= 0:
+                    if board[x+i][y-i] == ". ":
+                        moves.append([x+i, y-i])
+                    elif 'w' in board[x+i][y-i]:
+                        moves.append([x+i, y-i])
+                        break
+                    else:
+                        break
+
+            #Check down and right
+            for i in range(1, 8):
+                if x+i < 8 and y+i < 8:
+                    if board[x+i][y+i] == ". ":
+                        moves.append([x+i, y+i])
+                    elif 'w' in board[x+i][y+i]:
+                        moves.append([x+i, y+i])
+                        break
+                    else:
+                        break
+
+        #Check if it's a king
+        elif board[x][y] == "bK":
+
+            #Check up
+            if x-1 >= 0:
+                if board[x-1][y] == ". " or 'w' in board[x-1][y]:
+                    moves.append([x-1, y])
+
+            #Check down
+            if x+1 < 8:
+                if board[x+1][y] == ". " or 'w' in board[x+1][y]:
+                    moves.append([x+1, y])
+
+            #Check left
+            if y-1 >= 0:
+                if board[x][y-1] == ". " or 'w' in board[x][y-1]:
+                    moves.append([x, y-1])
+
+            #Check right
+            if y+1 < 8:
+                if board[x][y+1] == ". " or 'w' in board[x][y+1]:
+                    moves.append([x, y+1])
+
+            #Check up and left
+            if x-1 >= 0 and y-1 >= 0:
+                if board[x-1][y-1] == ". " or 'w' in board[x-1][y-1]:
+                    moves.append([x-1, y-1])
+
+            #Check up and right
+            if x-1 >= 0 and y+1 < 8:
+                if board[x-1][y+1] == ". " or 'w' in board[x-1][y+1]:
+                    moves.append([x-1, y+1])
+
+            #Check down and left
+            if x+1 < 8 and y-1 >= 0:
+                if board[x+1][y-1] == ". " or 'w' in board[x+1][y-1]:
+                    moves.append([x+1, y-1])
+
+            #Check down and right
+            if x+1 < 8 and y+1 < 8:
+                if board[x+1][y+1] == ". " or 'w' in board[x+1][y+1]:
+                    moves.append([x+1, y+1])
+
+    return moves
 
 
 def validateMove(board, startColumn, startRow, endColumn, endRow):
@@ -551,7 +1128,6 @@ def check(board, king):
     return False
 
 
-
 # Check if the requested move is a castle and if so, make the move
 def castle(board, userInput):
 
@@ -628,10 +1204,57 @@ def castle(board, userInput):
 
     return board, answer
 
+# Checks if the game is in a stalemate
+# A stalemate occurs when the king is not in check, but the king cannot move to a square that is not under attack
+# and there is no pieces on the board that can move
+def checkForStalemate(board):
+
+    #Check if the black king can move, and if so is it a move that doesnt result in check
+    if whiteTurn:
+        for i in range(8):
+            for j in range(8):
+                #Find the white king
+                if board[i][j] == "wK":
+                    #Check if the king can move to any of the 8 squares around it
+                    for k in range(-1, 2):
+                        for l in range(-1, 2):
+
+                            #Check that the position being checked is in bounds
+                            if i + k >= 0 and i + k < 8 and j + l >= 0 and j + l < 8:
+
+                                #Check that the square being checked is open
+                                if board[i + k][j + l] == ". ":
+
+                                    #Check if the move results in check
+                                    board[i + k][j + l] = "wK"
+                                    board[i][j] = ". "
+                                    if not check(board, "wK"):
+                                        board[i + k][j + l] = ". "
+                                        board[i][j] = "wK"
+                                        return False
+                                    else:
+                                        board[i + k][j + l] = ". "
+                                        board[i][j] = "wK"
+
+                    #Check if any other pieces can move
+                    for k in range(8):
+                        for l in range(8):
+                            if 'w' in board[k][l] and 'wK' != board[k][l]:
+                                if canMove(board, k, l):
+                                    return False
+
+
 
 userInput = None
 board = create_board()
 while userInput != "quit":
+    #First thign to do is check for a stalemate, if so end the game in a tie
+    ans = checkForStalemate(board)
+    if ans:
+        print("Stalemate! Game over!")
+        break
+
+
     print_board(board)
     userInput = input("Enter your move: ")
 
@@ -643,7 +1266,7 @@ while userInput != "quit":
         board, isCastle = castle(board, userInput)
 
     else:
-        startColumn, startRow, endColumn, endRow = get_moves(userInput)
+        startColumn, startRow, endColumn, endRow = get_moves_from_user_input(userInput)
         ans = makeMove(board, startColumn, startRow, endColumn, endRow)
 
     if not ans:
