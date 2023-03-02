@@ -47,6 +47,43 @@ def get_moves_from_user_input(input):
         endColumn = end[0].upper()
         endRow = end[1]
 
+        if startColumn == "A":
+            startColumn = 0
+        elif startColumn == "B":
+            startColumn = 1
+        elif startColumn == "C":
+            startColumn = 2
+        elif startColumn == "D":
+            startColumn = 3
+        elif startColumn == "E":
+            startColumn = 4
+        elif startColumn == "F":
+            startColumn = 5
+        elif startColumn == "G":
+            startColumn = 6
+        elif startColumn == "H":
+            startColumn = 7
+
+        if endColumn == "A":
+            endColumn = 0
+        elif endColumn == "B":
+            endColumn = 1
+        elif endColumn == "C":
+            endColumn = 2
+        elif endColumn == "D":
+            endColumn = 3
+        elif endColumn == "E":
+            endColumn = 4
+        elif endColumn == "F":
+            endColumn = 5
+        elif endColumn == "G":
+            endColumn = 6
+        elif endColumn == "H":
+            endColumn = 7
+
+        startRow = int(startRow) - 1
+        endRow = int(endRow) - 1
+
         return startColumn, startRow, endColumn, endRow
     except:
         return False
@@ -54,42 +91,6 @@ def get_moves_from_user_input(input):
 
 # This function takes in the board, starting column, starting row, ending column, and ending row, and then moves the piece from the starting position to the ending position
 def makeMove(board, startColumn, startRow, endColumn, endRow):
-    if startColumn == "A":
-        startColumn = 0
-    elif startColumn == "B":
-        startColumn = 1
-    elif startColumn == "C":
-        startColumn = 2
-    elif startColumn == "D":
-        startColumn = 3
-    elif startColumn == "E":
-        startColumn = 4
-    elif startColumn == "F":
-        startColumn = 5
-    elif startColumn == "G":
-        startColumn = 6
-    elif startColumn == "H":
-        startColumn = 7
-
-    if endColumn == "A":
-        endColumn = 0
-    elif endColumn == "B":
-        endColumn = 1
-    elif endColumn == "C":
-        endColumn = 2
-    elif endColumn == "D":
-        endColumn = 3
-    elif endColumn == "E":
-        endColumn = 4
-    elif endColumn == "F":
-        endColumn = 5
-    elif endColumn == "G":
-        endColumn = 6
-    elif endColumn == "H":
-        endColumn = 7
-
-    startRow = int(startRow) - 1
-    endRow = int(endRow) - 1
 
     if validateMove(board, startColumn, startRow, endColumn, endRow):
 
@@ -115,6 +116,7 @@ def makeMove(board, startColumn, startRow, endColumn, endRow):
                     break
                 else:
                     print("Invalid Piece")
+
         elif piece == "bP" and endRow == 0:
              while(True):
                 newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
@@ -139,6 +141,7 @@ def makeMove(board, startColumn, startRow, endColumn, endRow):
         return board
 
     else:
+        print("Invalid Move")
         return False
 
 
@@ -153,6 +156,9 @@ def canMove(board, x, y):
 #This lists all the moves for the piece at position x and y
 def listMoves(board, x, y):
     moves = []
+
+    x = int(x)
+    y = int(y)
 
     #White moves
     if whiteTurn:
@@ -721,7 +727,7 @@ def listMoves(board, x, y):
 
 
 # This function checks if the move is valid
-def validateMove(board, startColumn, startRow, endColumn, endRow):
+def validateMove(board, startRow, startColumn, endRow, endColumn):
 
     if board[startRow][startColumn] == ". ":
         return False
@@ -730,11 +736,12 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
     if 'w' in board[startRow][startColumn]:
         if 'b' not in board[endRow][endColumn] and board[endRow][endColumn] != ". ":
             return False
+
     elif 'b' in board[startRow][startColumn]:
         if 'w' not in board[endRow][endColumn] and board[endRow][endColumn] != ". ":
             return False
 
-    #Conditions for a pawn
+    # Conditions for a white pawn
     if board[startRow][startColumn] == "wP":
         answer = False
 
@@ -777,7 +784,7 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
 
         return answer
 
-
+    # Conditions for a black pawn
     elif board[startRow][startColumn] == "bP":
         if startRow == 6:
             if endRow == 5 and board[endRow][endColumn] == ". ":
@@ -821,14 +828,14 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
             return True
 
     # Conditions for a knight
-    if board[startRow][startColumn] == "wN" or board[startRow][startColumn] == "bN":
+    elif board[startRow][startColumn] == "wN" or board[startRow][startColumn] == "bN":
         if abs(startRow - endRow) == 2 and abs(startColumn - endColumn) == 1:
             return True
         elif abs(startRow - endRow) == 1 and abs(startColumn - endColumn) == 2:
             return True
 
     # Conditions for a bishop
-    if board[startRow][startColumn] == 'wB' or board[startRow][startColumn] == 'bB':
+    elif board[startRow][startColumn] == 'wB' or board[startRow][startColumn] == 'bB':
         if abs(startRow - endRow) == abs(startColumn - endColumn): #Check that it's on a diagonal
             if startRow < endRow and startColumn < endColumn:
                 for i in range(1, abs(startRow - endRow)):
@@ -849,7 +856,7 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
             return True
 
     # Conditions for a queen
-    if board[startRow][startColumn] == 'wQ' or board[startRow][startColumn] == 'bQ':
+    elif board[startRow][startColumn] == 'wQ' or board[startRow][startColumn] == 'bQ':
         if startRow == endRow:
             if startColumn < endColumn:
                 for i in range(startColumn + 1, endColumn -1):
@@ -892,18 +899,21 @@ def validateMove(board, startColumn, startRow, endColumn, endRow):
             return True
 
     # Conditions for a king
-    if board[startRow][startColumn] == 'wK' or board[startRow][startColumn] == 'bK':
+    elif board[startRow][startColumn] == 'wK' or board[startRow][startColumn] == 'bK':
+
         if abs(startRow - endRow) <= 1 and abs(startColumn - endColumn) <= 1:
             return True
 
     #If they're trying to move a empty space for some reason
-    return False
+    else:
+        print("Error, you're trying to move an empty space")
+        return False
 
 
 # Check if the king is in check
 def check(board, king):
-    kingRow = None
-    kingColumn = None
+    kingRow = -1
+    kingColumn = -1
 
     #find the king
     for i in range(8):
@@ -911,6 +921,10 @@ def check(board, king):
             if board[i][j] == king:
                 kingRow = i
                 kingColumn = j
+                break
+
+        if kingRow != -1:
+            break
 
     #Check if the king is in check by a pawn
     if king == "wK":
@@ -1131,21 +1145,36 @@ def check(board, king):
     return False
 
 
-# Gets all the pieces for a given color
-def getAllPieces(board, color):
+# Gets all the pieces for a given colour
+# Params: board is the game board, colour is a string of just 'w' or 'b'
+# Returns a list containing all the piece positions for the given colour
+def getAllPieces(board, colour):
     pieces = []
+
+    colour = colour.lower()
 
     for i in range(8):
         for j in range(8):
-            if board[i][j][0] == color:
-                pieces.append(board[i][j])
+            if board[i][j][0] == colour:
+                pieces.append([board[i][j], i, j])
 
     return pieces
 
 
 def canCheckBeBlocked(board, king):
 
-    pieces = 
+    pieces = getAllPieces(board, king[0])
+
+    for piece in pieces:
+        moves = listMoves(board, piece[1], piece[2])
+
+        for move in moves:
+            newBoard = makeMove(board, piece[1], piece[2], move[0], move[1])
+
+            if not check(newBoard, king):
+                return True
+
+    return False
 
 #Check for checkmate
 def checkmate(board, king):
@@ -1153,24 +1182,35 @@ def checkmate(board, king):
     #check if the king is in check
     isInCheck = check(board, king)
 
+    kingRow = -1
+    kingColumn = -1
+
     for i in range(8):
         for j in range(8):
             if board[i][j] == king:
                 kingRow = i
                 kingColumn = j
+                break
+        if kingRow != -1:
+            break
 
     if isInCheck:
+        #Get all the moves for the king
         moves = listMoves(board, kingRow, kingColumn)
 
+
+        #see if there is a move that the king can perform to get out of check
         for move in moves:
             newBoard = makeMove(board, kingRow, kingColumn, move[0], move[1])
+
             if not check(newBoard, king):
                 return False
 
         #See if another piece can block the check
         ans = canCheckBeBlocked(board, king)
 
-
+        return not ans
+    return False
 
 
 # Check if the requested move is a castle and if so, make the move
@@ -1183,7 +1223,6 @@ def castle(board, userInput):
         isInCheck = check(newBoard, "wK")
 
         if isInCheck:
-            print("Invalid move, try again!")
             return newBoard, False
 
 
@@ -1241,6 +1280,7 @@ def castle(board, userInput):
             else:
                 return newBoard, answer
         else:
+
             if check(newBoard, "bK"):
                 print("Invalid move, try again!")
                 return board, False
@@ -1273,6 +1313,7 @@ def checkForStalemate(board):
                                     #Check if the move results in check
                                     board[i + k][j + l] = "wK"
                                     board[i][j] = ". "
+
                                     if not check(board, "wK"):
                                         board[i + k][j + l] = ". "
                                         board[i][j] = "wK"
@@ -1289,25 +1330,63 @@ def checkForStalemate(board):
                                     return False
 
                     return True
+    else:
+        for i in range(8):
+            for j in range(8):
+                #Find the black king
+                if board[i][j] == "bK":
+                    #Check if the king can move to any of the 8 squares around it
+                    for k in range(-1, 2):
+                        for l in range(-1, 2):
+
+                            #Check that the position being checked is in bounds
+                            if i + k >= 0 and i + k < 8 and j + l >= 0 and j + l < 8:
+
+                                #Check that the square being checked is open
+                                if board[i + k][j + l] == ". ":
+
+                                    #Check if the move results in check
+                                    board[i + k][j + l] = "bK"
+                                    board[i][j] = ". "
+
+                                    if not check(board, "bK"):
+                                        board[i + k][j + l] = ". "
+                                        board[i][j] = "bK"
+                                        return False
+                                    else:
+                                        board[i + k][j + l] = ". "
+                                        board[i][j] = "bK"
+
+                    #Check if any other pieces can move
+                    for k in range(8):
+                        for l in range(8):
+                            if 'b' in board[k][l] and 'bK' != board[k][l]:
+                                if canMove(board, k, l):
+                                    return False
+
+                    return True
 
 
 
 userInput = None
 board = create_board()
 while userInput != "quit":
+
     #First thign to do is check for a stalemate, if so end the game in a tie
     ans = checkForStalemate(board)
     if ans:
         print("Stalemate! Game over!")
         break
 
-    #Check if the game is in check
+    #Check if the game is in checkmate
     if whiteTurn:
-        if check(board, "wK"):
-            print("White is in check!")
+        if checkmate(board, "bK"):
+            print("Checkmate! Black wins!")
+            break
     else:
-        if check(board, "bK"):
-            print("Black is in check!")
+        if checkmate(board, "wK"):
+            print("Checkmate! White wins!")
+            break
 
     print_board(board)
     userInput = input("Enter your move: ")
@@ -1329,10 +1408,10 @@ while userInput != "quit":
 
     #Check if the game is in checkmate
     if whiteTurn:
-        if checkmate(board, "bK"):
-            print("Checkmate! Black wins!")
+        if checkmate(board, "wK"):
+            print("Checkmate!, Black wins!")
             break
     else:
-        if checkmate(board, "wK"):
-            print("Checkmate! White wins!")
+        if checkmate(board, "bK"):
+            print("Checkmate!, White wins!")
             break
