@@ -84,15 +84,25 @@ def get_moves_from_user_input(input):
         startRow = int(startRow) - 1
         endRow = int(endRow) - 1
 
-        return startColumn, startRow, endColumn, endRow
+        return startRow, startColumn, endRow, endColumn
     except:
         return False
 
 
 # This function takes in the board, starting column, starting row, ending column, and ending row, and then moves the piece from the starting position to the ending position
-def makeMove(board, startColumn, startRow, endColumn, endRow):
+def makeMove(board, startRow, startColumn, endRow, endColumn):
 
-    if validateMove(board, startColumn, startRow, endColumn, endRow):
+    #Check if the move makes sense accourding to the turn
+    if whiteTurn:
+        if board[startRow][startColumn][0] == "b":
+            print("Not your piece to move, try again")
+            return board, False
+    else:
+        if board[startRow][startColumn][0] == "w":
+            print("Not your piece to move, try again")
+            return board, False
+
+    if validateMove(board, startRow, startColumn, endRow, endColumn):
 
         piece = board[startRow][startColumn]
         board[startRow][startColumn] = ". "
@@ -135,14 +145,15 @@ def makeMove(board, startColumn, startRow, endColumn, endRow):
                     break
                 else:
                     print("Invalid Piece")
+                    return board, False
         else:
             board[endRow][endColumn] = piece
 
-        return board
+        return board, True
 
     else:
         print("Invalid Move")
-        return False
+        return board, False
 
 
 #This checks if the piece at the given position has any avalible moves
@@ -1219,11 +1230,14 @@ def castle(board, userInput):
     newBoard = board
     answer = False
 
+    isInCheck = None
     if whiteTurn:
         isInCheck = check(newBoard, "wK")
+    else:
+        isInCheck = check(newBoard, "bK")
 
-        if isInCheck:
-            return newBoard, False
+    if isInCheck:
+        return newBoard, False
 
 
     if userInput == "O-O":
@@ -1279,8 +1293,8 @@ def castle(board, userInput):
                 return board, False
             else:
                 return newBoard, answer
-        else:
 
+        else:
             if check(newBoard, "bK"):
                 print("Invalid move, try again!")
                 return board, False
@@ -1399,11 +1413,10 @@ while userInput != "quit":
         board, isCastle = castle(board, userInput)
 
     else:
-        startColumn, startRow, endColumn, endRow = get_moves_from_user_input(userInput)
-        ans = makeMove(board, startColumn, startRow, endColumn, endRow)
+        startRow, startColumn, endRow, endColumn = get_moves_from_user_input(userInput)
+        board, ans = makeMove(board, startRow, startColumn, endRow, endColumn)
 
         if not ans:
-            print("Invalid move!")
             continue
 
     #Check if the game is in checkmate
@@ -1415,3 +1428,5 @@ while userInput != "quit":
         if checkmate(board, "bK"):
             print("Checkmate!, White wins!")
             break
+
+    whiteTurn = not whiteTurn
