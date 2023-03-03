@@ -1,7 +1,7 @@
 from board import *
 import copy
 
-depth_floor = 1
+depth_floor = 3
 counter = 0
 moveCount = 0
 
@@ -61,10 +61,10 @@ def get_points(board, aiColour, curColour):
                 playerKing = True
 
         if not aiKing:
-            aiPoints -= 10000
+            aiPoints -= 10000000000
 
         if not playerKing:
-            aiPoints += 10000
+            aiPoints += 10000000000
 
         return aiPoints
 
@@ -109,30 +109,37 @@ def get_points(board, aiColour, curColour):
                 playerKing = True
 
         if not aiKing:
-            aiPoints += 10000
+            aiPoints += 10000000000
 
         if not playerKing:
-            aiPoints -= 10000
+            aiPoints -= 10000000000
 
     return aiPoints
 
 
 #Main Algorithm that does the searching
-def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel):
+def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel, alpha, beta):
     global counter
     global moveCount
 
     #Check the points of the board
     if level >= depth_floor:
-        counter += 1
-        return board, False
+        #Get the points
+        points = get_points(board, myColour, curColour)
+
+        #Maximize the points, only alpha will be changed
+        if isMaxLevel:
+            alpha = max(points, alpha)
+
+        else:
+            beta = min(points, beta)
+
+        return board, False, alpha, beta
 
     pieces = get_pieces(board, curColour)
 
-
     for piece in pieces:
         moves = get_moves(board, whiteTurn, piece[1], piece[2])
-
         moveCount += len(moves)
 
         for move in moves:
@@ -142,13 +149,17 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel)
             newBoard, ans = make_move(newBoard, whiteTurn, piece[1], piece[2], move[0], move[1])
 
             if ans:
-
-                #Get the points
                 newColour = "w" if curColour == "b" else "b"
-                newBoard, ans = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour, not isMaxLevel)
+                newBoard, ans, newAlpha, newBeta = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour, not isMaxLevel, alpha, beta)
 
-                if ans:
-                    return newBoard, True
+                #Maximize the points, only alpha will be changed
+                if isMaxLevel:
+                    alpha = max(alpha, max(newAlpha, newBeta))
+
+                else:
+                    beta = min(beta, min(newAlpha, newBeta))
+
+                #return newBoard, True, alpha, beta
 
     # There's no pieces left on the board
-    return board, False
+    return board, False, alpha, beta

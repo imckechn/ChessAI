@@ -130,6 +130,8 @@ else:
                     break
 
         else:
-            board, ans = depth_first_search(board, whiteTurn, 0, aiColour, aiColour, True)
+            board, ans, alpha, beta = depth_first_search(board, whiteTurn, 0, aiColour, aiColour, True, -1000000, 1000000)
+            print("Alpha = ", alpha)
+            print("Beta = ", beta)
 
         whiteTurn = not whiteTurn
