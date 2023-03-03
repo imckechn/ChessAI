@@ -1,7 +1,6 @@
 from board import *
 from TARS import *
 
-
 def print_ai_move(startRow, startColumn, endRow, endColumn):
     print("TARS has made a move!")
     startRow += 1
@@ -61,6 +60,7 @@ while(True):
     if userInput == "2p" or userInput == "ai":
         break
 
+print("\n")
 if userInput == "2p":
     while userInput != "quit":
 
@@ -80,9 +80,13 @@ if userInput == "2p":
                 print("Checkmate! White wins!")
                 break
 
+        if whiteTurn:
+            print("White's turn!")
+        else:
+            print("Black's turn!")
+
         print_board(board)
         userInput = input("Enter your move: ")
-
         if userInput == "quit":
             break
 
@@ -111,6 +115,7 @@ if userInput == "2p":
 
 #TARS ENGAGE
 else:
+    aiGame = True
     aiColour = None
 
     while(True):
@@ -184,3 +189,4 @@ else:
             print("Beta = ", beta)
 
         whiteTurn = not whiteTurn
+        print("\n")

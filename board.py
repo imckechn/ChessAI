@@ -2,6 +2,8 @@
 # March 1, 2023
 # Chess AI
 
+aiGame = False
+
 # Creates the initial board, its a board contaning a bunch of strings indicating the positions
 # Returns the board array
 def create_board():
@@ -19,12 +21,12 @@ def create_board():
 
     board = [
         ['. ', '. ', '. ', 'wQ', '. ', '. ', 'wN', 'wR'], #1
-        ['. ', 'wP', '. ', '. ', '. ', '. ', 'wP', 'wP'], #2
+        ['. ', 'bP', '. ', '. ', '. ', '. ', 'wP', 'wP'], #2
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #3
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #4
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #5
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #6
-        ['. ', 'bP', '. ', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
+        ['. ', 'wP', '. ', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
         ['. ', '. ', '. ', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
     ]   # A     B     C     D     E     F     G     H
     return board
@@ -104,6 +106,7 @@ def get_moves_from_user_input(input):
 # @params: The board, the starting row, starting column, ending row, and ending column
 # @return: the board with the updates (if they are valid), and a boolean indicating if the move was valid
 def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
+    global aiGame
 
     #Check if the move makes sense accourding to the turn
     if whiteTurn:
@@ -123,7 +126,11 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
         #Check if it's a promotion
         if piece == "wP" and endRow == 7:
             while(True):
-                newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
+
+                if aiGame:
+                    newPiece = "queen"
+                else:
+                    newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
 
                 if newPiece == "queen":
                     board[endRow][endColumn] = "wQ"
@@ -142,7 +149,11 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
 
         elif piece == "bP" and endRow == 0:
              while(True):
-                newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
+
+                if aiGame:
+                    newPiece = "queen"
+                else:
+                    newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
 
                 if newPiece == "queen":
                     board[endRow][endColumn] = "bQ"
@@ -766,6 +777,7 @@ def get_moves(board, whiteTurn, x, y):
 # @params: the baord, the start row, start column, end row, end column. Rows and columns need to start at zero
 # Returns: True if the move is valid, False otherwise
 def validate_move(board, startRow, startColumn, endRow, endColumn):
+    answer = False
 
     if board[startRow][startColumn] == ". ":
         return False
