@@ -2,8 +2,6 @@ from board import *
 import copy
 
 depth_floor = 3
-counter = 0
-moveCount = 0
 
 # Gets the points given a boardState and a colour (can maximize the player or AI's points)
 # Params: the board, the ai colour (w or b), the current colour (w or b)
@@ -133,7 +131,7 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel,
         else:
             beta = min(points, beta)
 
-        return board, False, alpha, beta, None
+        return board, False, alpha, beta, bestMove
 
     pieces = get_pieces(board, curColour)
 
@@ -148,7 +146,7 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel,
 
             if ans:
                 newColour = "w" if curColour == "b" else "b"
-                newBoard, ans, lowerLevelAlpha, lowerLevelBeta, bestMove = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour, not isMaxLevel, alpha, beta)
+                newBoard, ans, lowerLevelAlpha, lowerLevelBeta, lowerBestMove = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour, not isMaxLevel, alpha, beta)
 
                 #Maximize the points, only alpha will be changed
                 if isMaxLevel:
@@ -156,13 +154,19 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel,
 
                     if newAlpha != alpha:
                         bestMove = (piece[1], piece[2], move[0], move[1])
-
+                        alpha = newAlpha
 
                 else:
                     newBeta = min(beta, min(lowerLevelAlpha, lowerLevelBeta))
 
                     if newBeta != beta:
                         bestMove = (piece[1], piece[2], move[0], move[1])
+                        beta = newBeta
+
+                #This is the pruning step, if alpha >= beta, then we don't need to search the other lower branches
+                # if alpha >= beta:
+                #     return newBoard, True, alpha, beta, bestMove
+
 
     # There's no pieces left on the board
     return board, False, alpha, beta, bestMove

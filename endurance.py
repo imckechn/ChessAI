@@ -1,6 +1,50 @@
 from board import *
 from TARS import *
 
+
+def print_ai_move(startRow, startColumn, endRow, endColumn):
+    print("TARS has made a move!")
+    startRow += 1
+    endRow += 1
+
+    if startColumn == 0:
+        startColumn = "A"
+    elif startColumn == 1:
+        startColumn = "B"
+    elif startColumn == 2:
+        startColumn = "C"
+    elif startColumn == 3:
+        startColumn = "D"
+    elif startColumn == 4:
+        startColumn = "E"
+    elif startColumn == 5:
+        startColumn = "F"
+    elif startColumn == 6:
+        startColumn = "G"
+    elif startColumn == 7:
+        startColumn = "H"
+
+    if endColumn == 0:
+        endColumn = "A"
+    elif endColumn == 1:
+        endColumn = "B"
+    elif endColumn == 2:
+        endColumn = "C"
+    elif endColumn == 3:
+        endColumn = "D"
+    elif endColumn == 4:
+        endColumn = "E"
+    elif endColumn == 5:
+        endColumn = "F"
+    elif endColumn == 6:
+        endColumn = "G"
+    elif endColumn == 7:
+        endColumn = "H"
+
+    print("TARS moved from " + str(startColumn) + str(startRow) + " to " + str(endColumn) + str(endRow))
+
+
+
 userInput = None
 board = create_board()
 
@@ -64,7 +108,6 @@ if userInput == "2p":
                 break
 
         whiteTurn = not whiteTurn
-
 
 #TARS ENGAGE
 else:
@@ -130,7 +173,11 @@ else:
                     break
 
         else:
+            print("TARS is making a move")
             board, ans, alpha, beta, bestMove = depth_first_search(board, whiteTurn, 0, aiColour, aiColour, True, -1000000, 1000000)
+
+            #print("Best move ", bestMove)
+            print_ai_move(bestMove[0], bestMove[1], bestMove[2], bestMove[3])
 
             board, ans = make_move(board, whiteTurn, bestMove[0], bestMove[1], bestMove[2], bestMove[3])
             print("Alpha = ", alpha)

@@ -5,17 +5,28 @@
 # Creates the initial board, its a board contaning a bunch of strings indicating the positions
 # Returns the board array
 def create_board():
+    # board = [
+    #     ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'], #1
+    #     ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'], #2
+    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #3
+    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #4
+    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #5
+    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #6
+    #     ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
+    #     ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
+    # ]   # A     B     C     D     E     F     G     H
+
+
     board = [
-        ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'], #1
-        ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'], #2
+        ['. ', '. ', '. ', 'wQ', '. ', '. ', 'wN', 'wR'], #1
+        ['. ', 'wP', '. ', '. ', '. ', '. ', 'wP', 'wP'], #2
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #3
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #4
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #5
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #6
-        ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
-        ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
+        ['. ', 'bP', '. ', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
+        ['. ', '. ', '. ', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
     ]   # A     B     C     D     E     F     G     H
-
     return board
 
 
@@ -24,7 +35,6 @@ def create_board():
 def print_board(board):
     for i in range(8):
         print(i+1, '   '.join(board[i]))
-
     print("  A    B    C    D    E    F    G    H")
 
 
@@ -112,7 +122,7 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
 
         #Check if it's a promotion
         if piece == "wP" and endRow == 7:
-             while(True):
+            while(True):
                 newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
 
                 if newPiece == "queen":
@@ -148,10 +158,11 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
                     break
                 else:
                     print("Invalid Piece")
-                    return board, False
+
         else:
             board[endRow][endColumn] = piece
 
+        board[startRow][startColumn] = ". "
         return board, True
 
     else:
@@ -790,24 +801,24 @@ def validate_move(board, startRow, startColumn, endRow, endColumn):
                 answer = True
 
         # Handle Promotion
-        if answer == True and endRow == 7:
-            while(True):
-                newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
+        # if answer == True and endRow == 7:
+        #     while(True):
+        #         newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
 
-                if newPiece == "queen":
-                    board[endRow][endColumn] = "wQ"
-                    break
-                elif newPiece == "rook":
-                    board[endRow][endColumn] = "wR"
-                    break
-                elif newPiece == "bishop":
-                    board[endRow][endColumn] = "wB"
-                    break
-                elif newPiece == "knight":
-                    board[endRow][endColumn] = "wN"
-                    break
-                else:
-                    print("Invalid Piece")
+        #         if newPiece == "queen":
+        #             board[endRow][endColumn] = "wQ"
+        #             break
+        #         elif newPiece == "rook":
+        #             board[endRow][endColumn] = "wR"
+        #             break
+        #         elif newPiece == "bishop":
+        #             board[endRow][endColumn] = "wB"
+        #             break
+        #         elif newPiece == "knight":
+        #             board[endRow][endColumn] = "wN"
+        #             break
+        #         else:
+        #             print("Invalid Piece")
 
         return answer
 
@@ -815,17 +826,40 @@ def validate_move(board, startRow, startColumn, endRow, endColumn):
     elif board[startRow][startColumn] == "bP":
         if startRow == 6:
             if endRow == 5 and board[endRow][endColumn] == ". ":
-                return True
+                answer = True
             elif endRow == 4 and board[endRow][endColumn] == ". " and board[5][startColumn] == ". ":
-                return True
+                answer = True
 
         if startRow != 6:
             if endRow == startRow - 1 and board[endRow][endColumn] == ". ":
-                return True
+                answer = True
 
         if endRow == startRow - 1 and (endColumn == startColumn + 1 or endColumn == startColumn - 1):
             if 'w' in board[endRow][endColumn]:
-                return True
+                answer = True
+
+        # Handle Promotion
+        # if answer and endRow == 0:
+        #     while(True):
+        #         newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
+
+        #         if newPiece == "queen":
+        #             board[endRow][endColumn] = "wQ"
+        #             break
+        #         elif newPiece == "rook":
+        #             board[endRow][endColumn] = "wR"
+        #             break
+        #         elif newPiece == "bishop":
+        #             board[endRow][endColumn] = "wB"
+        #             break
+        #         elif newPiece == "knight":
+        #             board[endRow][endColumn] = "wN"
+        #             break
+        #         else:
+        #             print("Invalid Piece")
+
+        return answer
+
 
     # Conditions for a rook
     elif board[startRow][startColumn] == "wR" or board[startRow][startColumn] == "bR":
@@ -1263,8 +1297,8 @@ def castle(board, whiteTurn, userInput):
 
     newBoard = board
     answer = False
-
     isInCheck = None
+
     if whiteTurn:
         isInCheck = check(newBoard, "wK")
     else:
@@ -1272,7 +1306,6 @@ def castle(board, whiteTurn, userInput):
 
     if isInCheck:
         return newBoard, False
-
 
     if userInput == "O-O":
         if whiteTurn:
