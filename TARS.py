@@ -1,79 +1,154 @@
 from board import *
 import copy
 
-depth_floor = 4
+depth_floor = 1
+counter = 0
+moveCount = 0
 
-#Gets the points given a boardState and a colour
-def get_points(board, colour):
-    colour = colour.lower()
-    if len(colour) != 1:
-        colour = colour[0]
+# Gets the points given a boardState and a colour (can maximize the player or AI's points)
+# Params: the board, the ai colour (w or b), the current colour (w or b)
+# Returns: the points
+def get_points(board, aiColour, curColour):
 
-    points = 0
+    playerColour = "w" if aiColour == "b" else "b"
 
-    for i in range(8):
-        for j in range(8):
-            if board[i][j][0] == colour:
-                if board[i][j][1] == "P":
-                    points += 1
+    aiPieces = get_pieces(board, curColour)
+    playerPieces = get_pieces(board, playerColour)
 
-                elif board[i][j][1] == "R":
-                    points += 4
+    aiPoints = 0
+    aiKing = False
+    playerKing = False
 
-                elif board[i][j][1] == "K":
-                    points += 3
+    #Maximize the points
+    if aiColour == curColour:
 
-                elif board[i][j][1] == "B":
-                    points += 3
+        for piece in aiPieces:
+            if piece[0][1] == "R":
+                aiPoints += 4
 
-                elif board[i][j][1] == "Q":
-                    points += 5
+            elif piece[0][1] == "N":
+                aiPoints += 2
 
-    return points
+            elif piece[0][1] == "B":
+                aiPoints += 3
+
+            elif piece[0][1] == "Q":
+                aiPoints += 5
+
+            elif piece[0][1] == "P":
+                aiPoints += 1
+
+            elif piece[0][1] == "K":
+                aiKing = True
+
+        for piece in playerPieces:
+            if piece[0][1] == "R":
+                aiPoints -= 4
+
+            elif piece[0][1] == "N":
+                aiPoints -= 2
+
+            elif piece[0][1] == "B":
+                aiPoints -= 3
+
+            elif piece[0][1] == "Q":
+                aiPoints -= 5
+
+            elif piece[0][1] == "P":
+                aiPoints -= 1
+
+            elif piece[0][1] == "K":
+                playerKing = True
+
+        if not aiKing:
+            aiPoints -= 10000
+
+        if not playerKing:
+            aiPoints += 10000
+
+        return aiPoints
+
+    #Minimize the points
+    else:
+        for piece in aiPieces:
+            if piece[0][1] == "R":
+                aiPoints -= 4
+
+            elif piece[0][1] == "N":
+                aiPoints -= 2
+
+            elif piece[0][1] == "B":
+                aiPoints -= 3
+
+            elif piece[0][1] == "Q":
+                aiPoints -= 5
+
+            elif piece[0][1] == "P":
+                aiPoints -= 1
+
+            elif piece[0][1] == "K":
+                aiKing = True
+
+        for piece in playerPieces:
+            if piece[0][1] == "R":
+                aiPoints += 4
+
+            elif piece[0][1] == "N":
+                aiPoints += 2
+
+            elif piece[0][1] == "B":
+                aiPoints += 3
+
+            elif piece[0][1] == "Q":
+                aiPoints += 5
+
+            elif piece[0][1] == "P":
+                aiPoints += 1
+
+            elif piece[0][1] == "K":
+                playerKing = True
+
+        if not aiKing:
+            aiPoints += 10000
+
+        if not playerKing:
+            aiPoints -= 10000
+
+    return aiPoints
 
 
 #Main Algorithm that does the searching
-def depth_first_search(board, whiteTurn, level, myColour, curColour):
-    print("Looping at level ", level)
+def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel):
+    global counter
+    global moveCount
 
     #Check the points of the board
     if level >= depth_floor:
+        counter += 1
         return board, False
 
     pieces = get_pieces(board, curColour)
 
+
     for piece in pieces:
         moves = get_moves(board, whiteTurn, piece[1], piece[2])
+
+        moveCount += len(moves)
 
         for move in moves:
             newBoard = copy.deepcopy(board)
 
-            # print("piece = ", piece)
-            # print("move = ", move)
-            # print_board(newBoard)
-
+            #Make the move, ans will be true if the move is valid
             newBoard, ans = make_move(newBoard, whiteTurn, piece[1], piece[2], move[0], move[1])
 
             if ans:
-                if checkmate(newBoard, whiteTurn, myColour):
-                    return newBoard, True
 
+                #Get the points
                 newColour = "w" if curColour == "b" else "b"
-
-                print("newBoard")
-                print_board(newBoard)
-                print("whiteTurn ", not whiteTurn)
-                print("level ", level + 1)
-                print("myColour = ", myColour)
-                print("newColour = ", newColour)
-
-                newBoard, ans = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour)
+                newBoard, ans = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour, not isMaxLevel)
 
                 if ans:
                     return newBoard, True
-            else:
-                print("BAD, SHOULDNT BE HERE")
-                return newBoard, False
 
     # There's no pieces left on the board
     return board, False
