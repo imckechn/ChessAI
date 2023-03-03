@@ -181,27 +181,27 @@ def get_moves(board, whiteTurn, x, y):
     #White moves
     if whiteTurn:
 
-    #Check if it's a pawn
+        #Check if it's a pawn
         if board[x][y] == "wP":
 
             #If it's in the start row, it can move forward 1 or 2 spaces
             if x == 1:
-                if board[x+1][y] == ". ":
-                    moves.append([x, y + 1])
+                if board[x + 1][y] == ". ":
+                    moves.append([x + 1, y])
 
-                    if board[x+2][y] == ". ":
-                        moves.append([x, y + 2])
+                    if board[x + 1][y] == ". ":
+                        moves.append([x + 1, y])
 
             #Otherwise it can only move forward 1 space
             else:
-                if board[x+1][y] == ". ":
-                    moves.append([x, y + 1])
+                if x <= 6 and board[x+1][y] == ". ":
+                    moves.append([x+1, y])
 
-            #Check if it can capture
-            if y != 0:
+            #Check if get_movesit can capture
+            if y != 0 and x != 7:
                 if 'b' in board[x+1][y-1]:
                     moves.append([x+1, y-1])
-            if y != 7:
+            if y != 7 and x != 7:
                 if 'b' in board[x+1][y+1]:
                     moves.append([x+1, y+1])
 
@@ -411,48 +411,53 @@ def get_moves(board, whiteTurn, x, y):
                     break
                 if board[x+i][y-i] == ". ":
                     moves.append([x+i, y-i])
+                elif 'b' in board[x+i][y-i]:
+                    moves.append([x+i, y-i])
+                    break
+                else:
+                    break
 
         #Check if it's a king
         elif board[x][y] == "wK":
 
             #Check up
             if x > 0:
-                if board[x-1][y] == ". " or 'b' in board[x-1][y]:
+                if board[x-1][y] == ". " or board[x-1][y][0] == 'b':
                     moves.append([x-1, y])
 
             #Check down
             if x < 7:
-                if board[x+1][y] == ". " or 'b' in board[x+1][y]:
+                if board[x+1][y] == ". " or board[x+1][y][0] == 'b':
                     moves.append([x+1, y])
 
             #Check left
             if y > 0:
-                if board[x][y-1] == ". " or 'b' in board[x][y-1]:
+                if board[x][y-1] == ". " or board[x][y-1][0] == 'b':
                     moves.append([x, y-1])
 
             #Check right
             if y < 7:
-                if board[x][y+1] == ". " or 'b' in board[x][y+1]:
+                if board[x][y+1] == ". " or board[x][y+1][0] == 'b':
                     moves.append([x, y+1])
 
             #Check up and left
             if x > 0 and y > 0:
-                if board[x-1][y-1] == ". " or 'b' in board[x-1][y-1]:
+                if board[x-1][y-1] == ". " or board[x-1][y-1][0] == 'b':
                     moves.append([x-1, y-1])
 
             #Check up and right
             if x > 0 and y < 7:
-                if board[x-1][y+1] == ". " or 'b' in board[x-1][y+1]:
+                if board[x-1][y+1] == ". " or board[x-1][y+1][0] == 'b':
                     moves.append([x-1, y+1])
 
             #Check down and left
             if x < 7 and y > 0:
-                if board[x+1][y-1] == ". " or 'b' in board[x+1][y-1]:
+                if board[x+1][y-1] == ". " or board[x+1][y-1][0] == 'b':
                     moves.append([x+1, y-1])
 
             #Check down and right
             if x < 7 and y < 7:
-                if board[x+1][y+1] == ". " or 'b' in board[x+1][y+1]:
+                if board[x+1][y+1] == ". " or board[x+1][y+1][0] == 'b':
                     moves.append([x+1, y+1])
 
     #Black moves
@@ -469,14 +474,14 @@ def get_moves(board, whiteTurn, x, y):
 
             # If it's not in the start row
             else:
-                if board[x-1][y] == ". ":
+                if y - 1 >= 0 and board[x-1][y] == ". ":
                     moves.append([x-1, y])
 
             # Check if it can take a piece
-            if y > 0:
+            if y > 0 and x > 0:
                 if 'w' in board[x-1][y-1]:
                     moves.append([x-1, y-1])
-            if y < 7:
+            if y < 7 and x > 0:
                 if 'w' in board[x-1][y+1]:
                     moves.append([x-1, y+1])
 
@@ -1182,8 +1187,8 @@ def get_pieces(board, colour):
 
     colour = colour.lower()
 
-    for i in range(8):
-        for j in range(8):
+    for i in range(8): # For each row
+        for j in range(8): # For each column
             if board[i][j][0] == colour:
                 pieces.append([board[i][j], i, j])
 
@@ -1202,8 +1207,6 @@ def can_check_be_blocked(board, whiteTurn, king):
 
         for move in moves:
             newBoard = make_move(board, whiteTurn, piece[1], piece[2], move[0], move[1])
-            print("board,", board)
-            print_board(newBoard)
 
             if not check(newBoard, king):
                 return True
@@ -1333,6 +1336,7 @@ def castle(board, whiteTurn, userInput):
                 return newBoard, answer
 
     return board, answer
+
 
 # Checks if the game is in a stalemate
 # A stalemate occurs when the king is not in check, but the king cannot move to a square that is not under attack
