@@ -20,6 +20,13 @@ def create_board():
 
 # This prints th current board to the screen
 def print_board(board):
+    if type(board) == bool:
+        print("It's a boolean, it's under check or checkmate")
+        return
+    
+    print("board")
+    print(board)
+
     for i in range(8):
         print(i+1, '   '.join(board[i]))
 
@@ -177,14 +184,15 @@ def get_moves(board, whiteTurn, x, y):
             #If it's in the start row, it can move forward 1 or 2 spaces
             if x == 1:
                 if board[x+1][y] == ". ":
-                    moves.append([x + 1, y])
-                if board[x+2][y] == ". ":
-                    moves.append([x + 2, y])
+                    moves.append([x, y + 1])
+
+                    if board[x+2][y] == ". ":
+                        moves.append([x, y + 2])
 
             #Otherwise it can only move forward 1 space
             else:
                 if board[x+1][y] == ". ":
-                    moves.append([x + 1, y])
+                    moves.append([x, y + 1])
 
             #Check if it can capture
             if y != 0:
@@ -449,23 +457,24 @@ def get_moves(board, whiteTurn, x, y):
 
         if board[x][y] == "bP":
 
-            #Check up
-            if x > 0:
+            # If it's in the start row
+            if x == 6:
+                if board[x-1][y] == ". ":
+                    moves.append([x-1, y])
+                    if board[x-2][y] == ". ":
+                        moves.append([x-2, y])
+
+            # If it's not in the start row
+            else:
                 if board[x-1][y] == ". ":
                     moves.append([x-1, y])
 
-            #Check up and left
-            if x > 0 and y > 0:
-                if board[x-1][y-1] == ". ":
+            # Check if it can take a piece
+            if y > 0:
+                if 'w' in board[x-1][y-1]:
                     moves.append([x-1, y-1])
-                elif 'w' in board[x-1][y-1]:
-                    moves.append([x-1, y-1])
-
-            #Check up and right
-            if x > 0 and y < 7:
-                if board[x-1][y+1] == ". ":
-                    moves.append([x-1, y+1])
-                elif 'w' in board[x-1][y+1]:
+            if y < 7:
+                if 'w' in board[x-1][y+1]:
                     moves.append([x-1, y+1])
 
         #Check if it's a rook
@@ -1175,10 +1184,12 @@ def can_check_be_blocked(board, whiteTurn, king):
     pieces = get_pieces(board, king[0])
 
     for piece in pieces:
-        moves = get_moves(board, piece[1], piece[2])
+        moves = get_moves(board, whiteTurn, piece[1], piece[2])
 
         for move in moves:
             newBoard = make_move(board, whiteTurn, piece[1], piece[2], move[0], move[1])
+            print("board,", board)
+            print_board(newBoard)
 
             if not check(newBoard, king):
                 return True
@@ -1205,7 +1216,7 @@ def checkmate(board, whiteTurn, king):
 
     if isInCheck:
         #Get all the moves for the king
-        moves = get_moves(board, kingRow, kingColumn)
+        moves = get_moves(board, whiteTurn, kingRow, kingColumn)
 
         #see if there is a move that the king can perform to get out of check
         for move in moves:
@@ -1215,7 +1226,7 @@ def checkmate(board, whiteTurn, king):
                 return False
 
         #See if another piece can block the check
-        ans = can_check_be_blocked(board, king)
+        ans = can_check_be_blocked(board, whiteTurn, king)
 
         return not ans
     return False
