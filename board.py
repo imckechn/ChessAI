@@ -3,6 +3,7 @@
 # Chess AI
 
 # Creates the initial board, its a board contaning a bunch of strings indicating the positions
+# Returns the board array
 def create_board():
     board = [
         ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'], #1
@@ -19,14 +20,8 @@ def create_board():
 
 
 # This prints th current board to the screen
+# @params: The board array
 def print_board(board):
-    if type(board) == bool:
-        print("It's a boolean, it's under check or checkmate")
-        return
-    
-    print("board")
-    print(board)
-
     for i in range(8):
         print(i+1, '   '.join(board[i]))
 
@@ -34,6 +29,8 @@ def print_board(board):
 
 
 # Given an input from the user, this splits it up into the starting column, starting row, ending column, and ending row, if the input is invalid, it returns false
+# @params: The input from the user
+# @return: The starting row, starting column, the ending row, and then ending column, unless it's castling, in which case it returns "castleRight" or "castleLeft"
 def get_moves_from_user_input(input):
     if input ==  "0-0":
         return "castleRight"
@@ -94,6 +91,8 @@ def get_moves_from_user_input(input):
 
 
 # This function takes in the board, starting column, starting row, ending column, and ending row, and then moves the piece from the starting position to the ending position
+# @params: The board, the starting row, starting column, ending row, and ending column
+# @return: the board with the updates (if they are valid), and a boolean indicating if the move was valid
 def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
 
     #Check if the move makes sense accourding to the turn
@@ -160,7 +159,9 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
         return board, False
 
 
-#This checks if the piece at the given position has any avalible moves
+# This checks if the piece at the given position has any avalible moves
+# @params: The board, if it's whites turn, the starting row, and starting column
+# Returns true if it can move, false if it can't
 def can_move(board, whiteTurn, x, y):
     if get_moves(board, whiteTurn, x, y) != []:
         return True
@@ -169,6 +170,8 @@ def can_move(board, whiteTurn, x, y):
 
 
 #This lists all the moves for the piece at position x and y
+# @params: The board, if it's whites turn, the starting row, and starting column
+# Returns a list of the moves that can be made
 def get_moves(board, whiteTurn, x, y):
     moves = []
 
@@ -744,6 +747,8 @@ def get_moves(board, whiteTurn, x, y):
 
 
 # This function checks if the move is valid
+# @params: the baord, the start row, start column, end row, end column. Rows and columns need to start at zero
+# Returns: True if the move is valid, False otherwise
 def validate_move(board, startRow, startColumn, endRow, endColumn):
 
     if board[startRow][startColumn] == ". ":
@@ -928,9 +933,16 @@ def validate_move(board, startRow, startColumn, endRow, endColumn):
 
 
 # Check if the king is in check
+# @param the board, the king, which can be either b w bK or wK
+# returns true if the king is in check, false otherwise
 def check(board, king):
     kingRow = -1
     kingColumn = -1
+
+    if king == "w":
+        king = "wK"
+    else:
+        king = "bK"
 
     #find the king
     for i in range(8):
@@ -1179,6 +1191,8 @@ def get_pieces(board, colour):
 
 
 # If the king is in check, this checks if there is any pieces that can block the check
+# @Params: The board, whiteTurn, and the king which can be either w k b or bk
+# Returns true if there is a piece that can block the check, false otherwise
 def can_check_be_blocked(board, whiteTurn, king):
 
     pieces = get_pieces(board, king[0])
@@ -1196,8 +1210,15 @@ def can_check_be_blocked(board, whiteTurn, king):
 
     return False
 
-#Check for checkmate
+
+# Checks for checkmate
+# @params: the board, whiteTurn and king which can be either w k b or bk
+# Returns true if the king is in checkmate, false otherwise
 def checkmate(board, whiteTurn, king):
+    if king == "w":
+        king = "wK"
+    else:
+        king = "bK"
 
     #check if the king is in check
     isInCheck = check(board, king)
@@ -1233,6 +1254,8 @@ def checkmate(board, whiteTurn, king):
 
 
 # Check if the requested move is a castle and if so, make the move
+# Params: The board, whiteTurn, and the user input
+# Returns: The board, and true or false depending on if the move was valid
 def castle(board, whiteTurn, userInput):
 
     newBoard = board
@@ -1314,8 +1337,9 @@ def castle(board, whiteTurn, userInput):
 # Checks if the game is in a stalemate
 # A stalemate occurs when the king is not in check, but the king cannot move to a square that is not under attack
 # and there is no pieces on the board that can move
+# @params: the board, whiteTurn
+# Returns true if the game is in a stalemate, false otherwise
 def check_for_stalemate(board, whiteTurn):
-
     #Check if the black king can move, and if so is it a move that doesnt result in check
     if whiteTurn:
         for i in range(8):
@@ -1350,8 +1374,8 @@ def check_for_stalemate(board, whiteTurn):
                             if 'w' in board[k][l] and 'wK' != board[k][l]:
                                 if can_move(board, whiteTurn, k, l):
                                     return False
-
                     return True
+
     else:
         for i in range(8):
             for j in range(8):

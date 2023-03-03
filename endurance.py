@@ -86,6 +86,9 @@ else:
 
         if (player == "w" and whiteTurn) or (player == "b" and not whiteTurn):
 
+            print("PAUSING")
+            ans = input()
+
             #First thign to do is check for a stalemate, if so end the game in a tie
             ans = check_for_stalemate(board, whiteTurn)
             if ans:
@@ -130,7 +133,6 @@ else:
                     break
 
         else:
-
-            board = depth_first_search(board, whiteTurn, 0, aiColour, aiColour)
+            board, ans = depth_first_search(board, whiteTurn, 0, aiColour, aiColour)
 
         whiteTurn = not whiteTurn

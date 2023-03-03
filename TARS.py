@@ -34,12 +34,13 @@ def get_points(board, colour):
 
 #Main Algorithm that does the searching
 def depth_first_search(board, whiteTurn, level, myColour, curColour):
+    print("Looping at level ", level)
 
     #Check the points of the board
     if level >= depth_floor:
         return board, False
 
-    pieces = get_pieces(board,curColour)
+    pieces = get_pieces(board, curColour)
 
     for piece in pieces:
         moves = get_moves(board, whiteTurn, piece[1], piece[2])
@@ -47,22 +48,32 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour):
         for move in moves:
             newBoard = copy.deepcopy(board)
 
-            print("piece = ", piece)
-            print("move = ", move)
-            print_board(newBoard)
+            # print("piece = ", piece)
+            # print("move = ", move)
+            # print_board(newBoard)
 
             newBoard, ans = make_move(newBoard, whiteTurn, piece[1], piece[2], move[0], move[1])
 
             if ans:
-                if checkmate(newBoard, whiteTurn,myColour):
+                if checkmate(newBoard, whiteTurn, myColour):
                     return newBoard, True
 
-                newColour = "wK" if curColour == "bK" else "bK"
+                newColour = "w" if curColour == "b" else "b"
+
+                print("newBoard")
+                print_board(newBoard)
+                print("whiteTurn ", not whiteTurn)
+                print("level ", level + 1)
+                print("myColour = ", myColour)
+                print("newColour = ", newColour)
+
                 newBoard, ans = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour)
 
                 if ans:
                     return newBoard, True
             else:
                 print("BAD, SHOULDNT BE HERE")
+                return newBoard, False
 
-
+    # There's no pieces left on the board
+    return board, False
