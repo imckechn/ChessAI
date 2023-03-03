@@ -130,7 +130,9 @@ else:
                     break
 
         else:
-            board, ans, alpha, beta = depth_first_search(board, whiteTurn, 0, aiColour, aiColour, True, -1000000, 1000000)
+            board, ans, alpha, beta, bestMove = depth_first_search(board, whiteTurn, 0, aiColour, aiColour, True, -1000000, 1000000)
+
+            board, ans = make_move(board, whiteTurn, bestMove[0], bestMove[1], bestMove[2], bestMove[3])
             print("Alpha = ", alpha)
             print("Beta = ", beta)
 

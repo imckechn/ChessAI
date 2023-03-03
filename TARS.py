@@ -119,8 +119,7 @@ def get_points(board, aiColour, curColour):
 
 #Main Algorithm that does the searching
 def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel, alpha, beta):
-    global counter
-    global moveCount
+    bestMove = None
 
     #Check the points of the board
     if level >= depth_floor:
@@ -134,13 +133,12 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel,
         else:
             beta = min(points, beta)
 
-        return board, False, alpha, beta
+        return board, False, alpha, beta, None
 
     pieces = get_pieces(board, curColour)
 
     for piece in pieces:
         moves = get_moves(board, whiteTurn, piece[1], piece[2])
-        moveCount += len(moves)
 
         for move in moves:
             newBoard = copy.deepcopy(board)
@@ -150,16 +148,21 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel,
 
             if ans:
                 newColour = "w" if curColour == "b" else "b"
-                newBoard, ans, newAlpha, newBeta = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour, not isMaxLevel, alpha, beta)
+                newBoard, ans, lowerLevelAlpha, lowerLevelBeta, bestMove = depth_first_search(newBoard, not whiteTurn, level + 1, myColour, newColour, not isMaxLevel, alpha, beta)
 
                 #Maximize the points, only alpha will be changed
                 if isMaxLevel:
-                    alpha = max(alpha, max(newAlpha, newBeta))
+                    newAlpha = max(alpha, max(lowerLevelAlpha, lowerLevelBeta))
+
+                    if newAlpha != alpha:
+                        bestMove = (piece[1], piece[2], move[0], move[1])
+
 
                 else:
-                    beta = min(beta, min(newAlpha, newBeta))
+                    newBeta = min(beta, min(lowerLevelAlpha, lowerLevelBeta))
 
-                #return newBoard, True, alpha, beta
+                    if newBeta != beta:
+                        bestMove = (piece[1], piece[2], move[0], move[1])
 
     # There's no pieces left on the board
-    return board, False, alpha, beta
+    return board, False, alpha, beta, bestMove
