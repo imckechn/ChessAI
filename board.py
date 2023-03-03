@@ -2,33 +2,33 @@
 # March 1, 2023
 # Chess AI
 
-aiGame = False
+import globals
 
 # Creates the initial board, its a board contaning a bunch of strings indicating the positions
 # Returns the board array
 def create_board():
-    # board = [
-    #     ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'], #1
-    #     ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'], #2
-    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #3
-    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #4
-    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #5
-    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #6
-    #     ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
-    #     ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
-    # ]   # A     B     C     D     E     F     G     H
-
-
     board = [
-        ['. ', '. ', '. ', 'wQ', '. ', '. ', 'wN', 'wR'], #1
-        ['. ', 'bP', '. ', '. ', '. ', '. ', 'wP', 'wP'], #2
+        ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'], #1
+        ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'], #2
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #3
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #4
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #5
         ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #6
-        ['. ', 'wP', '. ', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
-        ['. ', '. ', '. ', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
+        ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
+        ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
     ]   # A     B     C     D     E     F     G     H
+
+
+    # board = [
+    #     ['. ', '. ', '. ', 'wQ', '. ', '. ', 'wN', 'wR'], #1
+    #     ['. ', 'bP', '. ', '. ', '. ', '. ', 'wP', 'wP'], #2
+    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #3
+    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #4
+    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #5
+    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #6
+    #     ['. ', 'wP', '. ', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
+    #     ['. ', '. ', '. ', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
+    # ]   # A     B     C     D     E     F     G     H
     return board
 
 
@@ -106,7 +106,6 @@ def get_moves_from_user_input(input):
 # @params: The board, the starting row, starting column, ending row, and ending column
 # @return: the board with the updates (if they are valid), and a boolean indicating if the move was valid
 def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
-    global aiGame
 
     #Check if the move makes sense accourding to the turn
     if whiteTurn:
@@ -127,7 +126,7 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
         if piece == "wP" and endRow == 7:
             while(True):
 
-                if aiGame:
+                if globals.aiGame:
                     newPiece = "queen"
                 else:
                     newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
@@ -150,7 +149,7 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
         elif piece == "bP" and endRow == 0:
              while(True):
 
-                if aiGame:
+                if globals.aiGame:
                     newPiece = "queen"
                 else:
                     newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()

@@ -1,7 +1,8 @@
 from board import *
 import copy
+import globals
 
-depth_floor = 3
+depth_floor = 4
 
 # Gets the points given a boardState and a colour (can maximize the player or AI's points)
 # Params: the board, the ai colour (w or b), the current colour (w or b)
@@ -164,8 +165,8 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel,
                         beta = newBeta
 
                 #This is the pruning step, if alpha >= beta, then we don't need to search the other lower branches
-                # if alpha >= beta:
-                #     return newBoard, True, alpha, beta, bestMove
+                if alpha >= beta:
+                    return newBoard, True, alpha, beta, bestMove
 
 
     # There's no pieces left on the board
