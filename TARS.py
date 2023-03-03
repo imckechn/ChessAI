@@ -2,8 +2,7 @@ from board import *
 import copy
 import globals
 
-depth_floor = 4
-
+# Gets the points given a boardState and a colour (can maximize the player or AI's points)
 # Gets the points given a boardState and a colour (can maximize the player or AI's points)
 # Params: the board, the ai colour (w or b), the current colour (w or b)
 # Returns: the points
@@ -121,7 +120,7 @@ def depth_first_search(board, whiteTurn, level, myColour, curColour, isMaxLevel,
     bestMove = None
 
     #Check the points of the board
-    if level >= depth_floor:
+    if level >= globals.DEPTH:
         #Get the points
         points = get_points(board, myColour, curColour)
 

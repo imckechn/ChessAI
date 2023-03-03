@@ -1,3 +1,7 @@
+# Author: Ian McKechnie
+# March 3, 2023
+# Chess AI
+
 from board import *
 from TARS import *
 import globals
@@ -113,7 +117,7 @@ if userInput == "2p":
 
 #TARS ENGAGE
 else:
-    globals.aiGame = True
+    globals.AIGAME = True
     aiColour = None
 
     while(True):

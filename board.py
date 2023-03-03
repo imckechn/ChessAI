@@ -1,7 +1,3 @@
-# Author: Ian McKechnie
-# March 1, 2023
-# Chess AI
-
 import globals
 
 # Creates the initial board, its a board contaning a bunch of strings indicating the positions
@@ -126,7 +122,7 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
         if piece == "wP" and endRow == 7:
             while(True):
 
-                if globals.aiGame:
+                if globals.AIGAME:
                     newPiece = "queen"
                 else:
                     newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
@@ -149,7 +145,7 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
         elif piece == "bP" and endRow == 0:
              while(True):
 
-                if globals.aiGame:
+                if globals.AIGAME:
                     newPiece = "queen"
                 else:
                     newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()

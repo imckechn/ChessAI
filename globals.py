@@ -1,1 +1,2 @@
-aiGame = False
+AIGAME = False
+DEPTH = 4
