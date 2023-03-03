@@ -2,9 +2,6 @@
 # March 1, 2023
 # Chess AI
 
-# Global Variables
-whiteTurn = True
-
 # Creates the initial board, its a board contaning a bunch of strings indicating the positions
 def create_board():
     board = [
@@ -90,7 +87,7 @@ def get_moves_from_user_input(input):
 
 
 # This function takes in the board, starting column, starting row, ending column, and ending row, and then moves the piece from the starting position to the ending position
-def makeMove(board, startRow, startColumn, endRow, endColumn):
+def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
 
     #Check if the move makes sense accourding to the turn
     if whiteTurn:
@@ -102,7 +99,7 @@ def makeMove(board, startRow, startColumn, endRow, endColumn):
             print("Not your piece to move, try again")
             return board, False
 
-    if validateMove(board, startRow, startColumn, endRow, endColumn):
+    if validate_move(board, startRow, startColumn, endRow, endColumn):
 
         piece = board[startRow][startColumn]
         board[startRow][startColumn] = ". "
@@ -157,15 +154,15 @@ def makeMove(board, startRow, startColumn, endRow, endColumn):
 
 
 #This checks if the piece at the given position has any avalible moves
-def canMove(board, x, y):
-    if listMoves(board, x, y) != []:
+def can_move(board, whiteTurn, x, y):
+    if get_moves(board, whiteTurn, x, y) != []:
         return True
     else:
         return False
 
 
 #This lists all the moves for the piece at position x and y
-def listMoves(board, x, y):
+def get_moves(board, whiteTurn, x, y):
     moves = []
 
     x = int(x)
@@ -738,7 +735,7 @@ def listMoves(board, x, y):
 
 
 # This function checks if the move is valid
-def validateMove(board, startRow, startColumn, endRow, endColumn):
+def validate_move(board, startRow, startColumn, endRow, endColumn):
 
     if board[startRow][startColumn] == ". ":
         return False
@@ -1159,7 +1156,7 @@ def check(board, king):
 # Gets all the pieces for a given colour
 # Params: board is the game board, colour is a string of just 'w' or 'b'
 # Returns a list containing all the piece positions for the given colour
-def getAllPieces(board, colour):
+def get_pieces(board, colour):
     pieces = []
 
     colour = colour.lower()
@@ -1172,15 +1169,16 @@ def getAllPieces(board, colour):
     return pieces
 
 
-def canCheckBeBlocked(board, king):
+# If the king is in check, this checks if there is any pieces that can block the check
+def can_check_be_blocked(board, whiteTurn, king):
 
-    pieces = getAllPieces(board, king[0])
+    pieces = get_pieces(board, king[0])
 
     for piece in pieces:
-        moves = listMoves(board, piece[1], piece[2])
+        moves = get_moves(board, piece[1], piece[2])
 
         for move in moves:
-            newBoard = makeMove(board, piece[1], piece[2], move[0], move[1])
+            newBoard = make_move(board, whiteTurn, piece[1], piece[2], move[0], move[1])
 
             if not check(newBoard, king):
                 return True
@@ -1188,7 +1186,7 @@ def canCheckBeBlocked(board, king):
     return False
 
 #Check for checkmate
-def checkmate(board, king):
+def checkmate(board, whiteTurn, king):
 
     #check if the king is in check
     isInCheck = check(board, king)
@@ -1207,25 +1205,24 @@ def checkmate(board, king):
 
     if isInCheck:
         #Get all the moves for the king
-        moves = listMoves(board, kingRow, kingColumn)
-
+        moves = get_moves(board, kingRow, kingColumn)
 
         #see if there is a move that the king can perform to get out of check
         for move in moves:
-            newBoard = makeMove(board, kingRow, kingColumn, move[0], move[1])
+            newBoard = make_move(board, whiteTurn, kingRow, kingColumn, move[0], move[1])
 
             if not check(newBoard, king):
                 return False
 
         #See if another piece can block the check
-        ans = canCheckBeBlocked(board, king)
+        ans = can_check_be_blocked(board, king)
 
         return not ans
     return False
 
 
 # Check if the requested move is a castle and if so, make the move
-def castle(board, userInput):
+def castle(board, whiteTurn, userInput):
 
     newBoard = board
     answer = False
@@ -1306,7 +1303,7 @@ def castle(board, userInput):
 # Checks if the game is in a stalemate
 # A stalemate occurs when the king is not in check, but the king cannot move to a square that is not under attack
 # and there is no pieces on the board that can move
-def checkForStalemate(board):
+def check_for_stalemate(board, whiteTurn):
 
     #Check if the black king can move, and if so is it a move that doesnt result in check
     if whiteTurn:
@@ -1340,7 +1337,7 @@ def checkForStalemate(board):
                     for k in range(8):
                         for l in range(8):
                             if 'w' in board[k][l] and 'wK' != board[k][l]:
-                                if canMove(board, k, l):
+                                if can_move(board, whiteTurn, k, l):
                                     return False
 
                     return True
@@ -1375,58 +1372,7 @@ def checkForStalemate(board):
                     for k in range(8):
                         for l in range(8):
                             if 'b' in board[k][l] and 'bK' != board[k][l]:
-                                if canMove(board, k, l):
+                                if can_move(board, whiteTurn, k, l):
                                     return False
 
                     return True
-
-
-
-userInput = None
-board = create_board()
-while userInput != "quit":
-
-    #First thign to do is check for a stalemate, if so end the game in a tie
-    ans = checkForStalemate(board)
-    if ans:
-        print("Stalemate! Game over!")
-        break
-
-    #Check if the game is in checkmate
-    if whiteTurn:
-        if checkmate(board, "bK"):
-            print("Checkmate! Black wins!")
-            break
-    else:
-        if checkmate(board, "wK"):
-            print("Checkmate! White wins!")
-            break
-
-    print_board(board)
-    userInput = input("Enter your move: ")
-
-    if userInput == "quit":
-        break
-
-    #Check if the move is a castle
-    if userInput == "O-O" or userInput == "O-O-O":
-        board, isCastle = castle(board, userInput)
-
-    else:
-        startRow, startColumn, endRow, endColumn = get_moves_from_user_input(userInput)
-        board, ans = makeMove(board, startRow, startColumn, endRow, endColumn)
-
-        if not ans:
-            continue
-
-    #Check if the game is in checkmate
-    if whiteTurn:
-        if checkmate(board, "wK"):
-            print("Checkmate!, Black wins!")
-            break
-    else:
-        if checkmate(board, "bK"):
-            print("Checkmate!, White wins!")
-            break
-
-    whiteTurn = not whiteTurn
