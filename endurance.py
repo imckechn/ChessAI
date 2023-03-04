@@ -6,7 +6,9 @@ from board import *
 from TARS import *
 import globals
 
-def print_ai_move(startRow, startColumn, endRow, endColumn):
+def print_ai_move(board, startRow, startColumn, endRow, endColumn):
+
+    pieceName = board[startRow][startColumn]
     startRow += 1
     endRow += 1
 
@@ -44,7 +46,7 @@ def print_ai_move(startRow, startColumn, endRow, endColumn):
     elif endColumn == 7:
         endColumn = "H"
 
-    print("TARS moved from " + str(startColumn) + str(startRow) + " to " + str(endColumn) + str(endRow))
+    print("TARS moved the " + pieceName + " from " + str(startColumn) + str(startRow) + " to " + str(endColumn) + str(endRow))
 
 
 userInput = None
@@ -66,21 +68,32 @@ while(True):
 if userInput == "2p":
     while userInput != "quit":
 
-        #First thign to do is check for a stalemate, if so end the game in a tie
-        ans = check_for_stalemate(board, whiteTurn)
-        if ans:
+        # This checks if the queen is still on the board, if not the game is over
+        # It also prints the winner
+        if isGameOver(board):
+            break
+
+        if check_for_stalemate(board, whiteTurn) or check_for_stalemate(board, not whiteTurn):
             print("Stalemate! Game over!")
             break
 
-        #Check if the game is in checkmate
+        #Check if the game is in checkmate or check
         if whiteTurn:
-            if checkmate(board, whiteTurn, "bK"):
+            if checkmate(board, "bK"):
                 print("Checkmate! Black wins!")
                 break
+
+            else:
+                if check(board, "bK"):
+                    print("Black is in check!")
+
         else:
-            if checkmate(board, whiteTurn, "wK"):
+            if checkmate(board, "wK"):
                 print("Checkmate! White wins!")
                 break
+
+            if check(board, "wK"):
+                    print("White is in check!")
 
         if whiteTurn:
             print("White's turn!")
@@ -103,16 +116,6 @@ if userInput == "2p":
             if not ans:
                 continue
 
-        #Check if the game is in checkmate
-        if whiteTurn:
-            if checkmate(board, whiteTurn, "wK"):
-                print("Checkmate!, Black wins!")
-                break
-        else:
-            if checkmate(board, whiteTurn, "bK"):
-                print("Checkmate!, White wins!")
-                break
-
         whiteTurn = not whiteTurn
 
 #TARS ENGAGE
@@ -134,23 +137,35 @@ else:
 
     while userInput != "quit":
 
-        if (player == "w" and whiteTurn) or (player == "b" and not whiteTurn):
+        # This checks if the queen is still on the board, if not the game is over
+        # It also prints the winner
+        if isGameOver(board):
+            break
 
-            #First thign to do is check for a stalemate, if so end the game in a tie
-            ans = check_for_stalemate(board, whiteTurn)
-            if ans:
-                print("Stalemate! Game over!")
+        if check_for_stalemate(board, whiteTurn) or check_for_stalemate(board, not whiteTurn):
+            print("Stalemate! Game over!")
+            break
+
+        #Check if the game is in checkmate or check
+        if whiteTurn:
+            if checkmate(board, "bK"):
+                print("Checkmate! Black wins!")
                 break
 
-            #Check if the game is in checkmate
-            if whiteTurn:
-                if checkmate(board, whiteTurn, "bK"):
-                    print("Checkmate! Black wins!")
-                    break
             else:
-                if checkmate(board, whiteTurn, "wK"):
-                    print("Checkmate! White wins!")
-                    break
+                if check(board, "bK"):
+                    print("Black is in check!")
+
+        else:
+            if checkmate(board, "wK"):
+                print("Checkmate! White wins!")
+                break
+
+            if check(board, "wK"):
+                    print("White is in check!")
+
+        # If it's the player's turn
+        if (player == "w" and whiteTurn) or (player == "b" and not whiteTurn):
 
             print_board(board)
             userInput = input("Enter your move: ")
@@ -169,21 +184,11 @@ else:
                 if not ans:
                     continue
 
-            #Check if the game is in checkmate
-            if whiteTurn:
-                if checkmate(board, whiteTurn, "wK"):
-                    print("Checkmate!, Black wins!")
-                    break
-            else:
-                if checkmate(board, whiteTurn, "bK"):
-                    print("Checkmate!, White wins!")
-                    break
-
         else:
             print("TARS is making a move")
             board, ans, alpha, beta, bestMove = depth_first_search(board, whiteTurn, 0, aiColour, aiColour, True, -1000000, 1000000)
 
-            print_ai_move(bestMove[0], bestMove[1], bestMove[2], bestMove[3])
+            print_ai_move(board, bestMove[0], bestMove[1], bestMove[2], bestMove[3])
             board, ans = make_move(board, whiteTurn, bestMove[0], bestMove[1], bestMove[2], bestMove[3])
 
         whiteTurn = not whiteTurn

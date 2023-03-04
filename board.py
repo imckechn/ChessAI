@@ -172,7 +172,6 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
         return board, True
 
     else:
-        print("Invalid Move")
         return board, False
 
 
@@ -1258,11 +1257,14 @@ def can_check_be_blocked(board, whiteTurn, king):
 # Checks for checkmate
 # @params: the board, whiteTurn and king which can be either w k b or bk
 # Returns true if the king is in checkmate, false otherwise
-def checkmate(board, whiteTurn, king):
+def checkmate(board, king):
+
     if king == "w":
         king = "wK"
+        whiteTurn = True
     else:
         king = "bK"
+        whiteTurn = False
 
     #check if the king is in check
     isInCheck = check(board, king)
@@ -1323,9 +1325,6 @@ def castle(board, whiteTurn, userInput):
                 newBoard[7][7] = ". "
                 answer = True
 
-            else:
-                print("Invalid move!")
-
         else:
             if newBoard[0][4] == "bK" and newBoard[0][7] == "bR" and newBoard[0][5] == ". " and newBoard[0][6] == ". ":
                 newBoard[0][4] = ". "
@@ -1333,9 +1332,6 @@ def castle(board, whiteTurn, userInput):
                 newBoard[0][6] = "bR"
                 newBoard[0][7] = ". "
                 answer = True
-
-            else:
-                print("Invalid move!")
 
     elif userInput == "O-O-O":
         if whiteTurn:
@@ -1346,9 +1342,6 @@ def castle(board, whiteTurn, userInput):
                 newBoard[7][0] = ". "
                 answer = True
 
-            else:
-                print("Invalid move!")
-
         else:
             if newBoard[0][4] == "bK" and newBoard[0][0] == "bR" and newBoard[0][1] == ". " and newBoard[0][2] == ". " and newBoard[0][3] == ". ":
                 newBoard[0][4] = ". "
@@ -1357,20 +1350,15 @@ def castle(board, whiteTurn, userInput):
                 newBoard[0][0] = ". "
                 answer = True
 
-            else:
-                print("Invalid move!")
-
     if answer:
         if whiteTurn:
             if check(newBoard, "wK"):
-                print("Invalid move, try again!")
                 return board, False
             else:
                 return newBoard, answer
 
         else:
             if check(newBoard, "bK"):
-                print("Invalid move, try again!")
                 return board, False
             else:
                 return newBoard, answer
@@ -1455,3 +1443,28 @@ def check_for_stalemate(board, whiteTurn):
                                     return False
 
                     return True
+
+# Checks if the game is over
+# A game is over when a king is in checkmate or a stalemate occurs
+# @params: the board
+# Returns true if the game is over, false otherwise
+def isGameOver(board):
+    whiteQueenFound = False
+    blackQueenFound = False
+
+    #Check if the game is in a stalemate
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] == "wK":
+                whiteQueenFound = True
+            elif board[i][j] == "bK":
+                blackQueenFound = True
+
+    if not whiteQueenFound:
+        print("Black wins by checkmate")
+        return True
+    elif not blackQueenFound:
+        print("White wins by checkmate")
+        return True
+
+    return False
