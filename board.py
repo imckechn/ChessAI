@@ -944,7 +944,7 @@ def check(board, king):
     kingRow = -1
     kingColumn = -1
 
-    if king == "w":
+    if king == "w" or king == "wK":
         king = "wK"
     else:
         king = "bK"

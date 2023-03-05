@@ -136,6 +136,7 @@ else:
         aiColour = "w"
 
     while userInput != "quit":
+        print_board(board)
 
         # This checks if the queen is still on the board, if not the game is over
         # It also prints the winner
@@ -147,27 +148,28 @@ else:
             break
 
         #Check if the game is in checkmate or check
-        if whiteTurn:
-            if checkmate(board, "bK"):
-                print("Checkmate! Black wins!")
-                break
+        if checkmate(board, "bK"):
+            print("Checkmate! Black wins!")
+            break
 
-            else:
-                if check(board, "bK"):
-                    print("Black is in check!")
+        elif check(board, "bK"):
+                print("Black is in check!")
 
         else:
-            if checkmate(board, "wK"):
-                print("Checkmate! White wins!")
-                break
+            print("Black is not in check!")
 
-            if check(board, "wK"):
-                    print("White is in check!")
+        if checkmate(board, "wK"):
+            print("Checkmate! White wins!")
+            break
+
+        elif check(board, "wK"):
+                print("White is in check!")
+
+        else:
+            print("White is not in check!")
 
         # If it's the player's turn
         if (player == "w" and whiteTurn) or (player == "b" and not whiteTurn):
-
-            print_board(board)
             userInput = input("Enter your move: ")
 
             if userInput == "quit":
@@ -192,7 +194,7 @@ else:
 
         else:
             print("TARS is making a move")
-            board, ans, alpha, beta, bestMove = depth_first_search(board, whiteTurn, 0, aiColour, aiColour, True, -1000000, 1000000)
+            brd, ans, alpha, beta, bestMove = depth_first_search(board, whiteTurn, 0, aiColour, aiColour, True, -1000000, 1000000)
 
             print_ai_move(board, bestMove[0], bestMove[1], bestMove[2], bestMove[3])
             board, ans = make_move(board, whiteTurn, bestMove[0], bestMove[1], bestMove[2], bestMove[3])
