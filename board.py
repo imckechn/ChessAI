@@ -1190,14 +1190,30 @@ def can_check_be_blocked(board, whiteTurn, king):
 
     pieces = get_pieces(board, king[0])
 
+    moveRow = 0
+    moveColumn = 0
     for piece in pieces:
         moves = get_moves(board, whiteTurn, piece[1], piece[2])
 
+        board[piece[1]][piece[2]] = ". "
         for move in moves:
-            newBoard, ans = make_move(board, whiteTurn, piece[1], piece[2], move[0], move[1])
+            moveRow, moveColumn = move[0], move[1]
+            #moveColumn = move[1]
+            oldPiece = board[move[0]][move[1]]
+            board[move[0]][move[1]] = piece[0]
 
-            if not check(newBoard, king):
+
+            if not check(board, king):
+                board[piece[1]][piece[2]] = piece[0]
+                board[move[0]][move[1]] = oldPiece
                 return True
+            else:
+                board[move[0]][move[1]] = oldPiece
+
+        board[piece[1]][piece[2]] = piece[0]
+
+    board[pieces[-1][1]][pieces[-1][2]] = pieces[-1][0]
+    board[moveRow][moveColumn] = ". "
 
     return False
 

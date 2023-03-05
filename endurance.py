@@ -80,6 +80,7 @@ if userInput == "2p":
         # Check if the game is in checkmate or check
         if checkmate(board, "bK"):
             print("Checkmate! Black wins!")
+            print_board(board)
             break
 
         elif check(board, "bK"):
@@ -87,6 +88,7 @@ if userInput == "2p":
 
         if checkmate(board, "wK"):
             print("Checkmate! White wins!")
+            print_board(board)
             break
 
         elif check(board, "wK"):
@@ -148,6 +150,7 @@ else:
         #Check if the game is in checkmate or check
         if checkmate(board, "bK"):
             print("Checkmate! Black wins!")
+            print_board(board)
             break
 
         elif check(board, "bK"):
@@ -155,6 +158,7 @@ else:
 
         if checkmate(board, "wK"):
             print("Checkmate! White wins!")
+            print_board(board)
             break
 
         elif check(board, "wK"):
@@ -197,3 +201,5 @@ else:
 
         whiteTurn = not whiteTurn
         print("\n")
+
+print("Thanks for playing!")
