@@ -178,10 +178,16 @@ else:
                 board, isCastle = castle(board, whiteTurn, userInput)
 
             else:
-                startRow, startColumn, endRow, endColumn = get_moves_from_user_input(userInput)
+                try:
+                    startRow, startColumn, endRow, endColumn = get_moves_from_user_input(userInput)
+                except:
+                    print("Invalid move, use standard chess format (ex. e2 e4) or castle (ex. O-O or O-O-O)")
+                    continue
+
                 board, ans = make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn)
 
                 if not ans:
+                    print("Move was not valid, try again")
                     continue
 
         else:

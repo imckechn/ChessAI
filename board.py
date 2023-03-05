@@ -14,16 +14,16 @@ def create_board():
         ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
     ]   # A     B     C     D     E     F     G     H
 
-
-    # board = [
-    #     ['. ', '. ', '. ', 'wQ', '. ', '. ', 'wN', 'wR'], #1
-    #     ['. ', 'bP', '. ', '. ', '. ', '. ', 'wP', 'wP'], #2
-    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #3
-    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #4
-    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #5
-    #     ['. ', '. ', '. ', '. ', '. ', '. ', '. ', '. '], #6
-    #     ['. ', 'wP', '. ', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
-    #     ['. ', '. ', '. ', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
+    board = [
+        ['wR',   'bR',   'wB',   'wK',   '. ',   'wB',   'bB',   'wR'],
+        ['bR',   'wR',   'bR',   '. ',   '. ',   '. ',   '. ',   '. '],
+        ['. ',   'bR ',   '. ',   '. ',   '. ',   'wP',   '. ',   '. '],
+        ['. ',   '. ',   '. ',   '. ',   'wP',   '. ',   'wP',   'wP'],
+        ['. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. '],
+        ['bP',   '. ',   'bP',   '. ',   'bP',   '. ',   '. ',   '. '],
+        ['. ',   '. ',   '. ',   '. ',   '. ',   'bP',   'bP',   'bP'],
+        ['bR',   'bN',   'bB',   '. ',   'bK',   '. ',   'bN',   'bR']
+    ]
     # ]   # A     B     C     D     E     F     G     H
     return board
 
@@ -40,6 +40,7 @@ def print_board(board):
 # @params: The input from the user
 # @return: The starting row, starting column, the ending row, and then ending column, unless it's castling, in which case it returns "castleRight" or "castleLeft"
 def get_moves_from_user_input(input):
+
     if input ==  "0-0":
         return "castleRight"
     elif input == "0-0-0":
@@ -806,26 +807,6 @@ def validate_move(board, startRow, startColumn, endRow, endColumn):
             if 'b' in board[endRow][endColumn]:
                 answer = True
 
-        # Handle Promotion
-        # if answer == True and endRow == 7:
-        #     while(True):
-        #         newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
-
-        #         if newPiece == "queen":
-        #             board[endRow][endColumn] = "wQ"
-        #             break
-        #         elif newPiece == "rook":
-        #             board[endRow][endColumn] = "wR"
-        #             break
-        #         elif newPiece == "bishop":
-        #             board[endRow][endColumn] = "wB"
-        #             break
-        #         elif newPiece == "knight":
-        #             board[endRow][endColumn] = "wN"
-        #             break
-        #         else:
-        #             print("Invalid Piece")
-
         return answer
 
     # Conditions for a black pawn
@@ -844,26 +825,6 @@ def validate_move(board, startRow, startColumn, endRow, endColumn):
             if 'w' in board[endRow][endColumn]:
                 answer = True
 
-        # Handle Promotion
-        # if answer and endRow == 0:
-        #     while(True):
-        #         newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
-
-        #         if newPiece == "queen":
-        #             board[endRow][endColumn] = "wQ"
-        #             break
-        #         elif newPiece == "rook":
-        #             board[endRow][endColumn] = "wR"
-        #             break
-        #         elif newPiece == "bishop":
-        #             board[endRow][endColumn] = "wB"
-        #             break
-        #         elif newPiece == "knight":
-        #             board[endRow][endColumn] = "wN"
-        #             break
-        #         else:
-        #             print("Invalid Piece")
-
         return answer
 
 
@@ -877,10 +838,9 @@ def validate_move(board, startRow, startColumn, endRow, endColumn):
                     if board[startRow][i] != ". ":
                         return False
             elif startColumn > endColumn:
-                for i in range(startColumn - 1, endColumn -1, -1):
+                for i in range(startColumn - 1, endColumn, -1):
                     if board[startRow][i] != ". ":
                         return False
-
             return True
 
         elif startColumn == endColumn:
