@@ -13,6 +13,16 @@ def create_board():
         ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
         ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
     ]   # A     B     C     D     E     F     G     H
+    board = [
+        ['wR',   'wN',   'wB',   '. ',   'wK',   'wB',   'wN',   'wR'],
+        ['. ',   'wP',   '. ',   '. ',   '. ',   '. ',   'wP',   'wP'],
+        ['. ',   'bP',   '. ',   '. ',   '. ',   '. ',   '. ',   '. '],
+        ['wP',   '. ',   '. ',   'bQ',   '. ',   '. ',   '. ',   '. '],
+        ['. ',   '. ',   '. ',   '. ',   'wP',   '. ',   '. ',   '. '],
+        ['bP',   '. ',   'bP',   '. ',   '. ',   '. ',   'bP',   '. '],
+        ['. ',   '. ',   '. ',   'bN',   '. ',   'wQ',   '. ',   'bP'],
+        ['bR',   '. ',   '. ',   '. ',   'bK',   'bB',   '. ',   'bR']
+    ]   # A     B     C     D     E     F     G     H
     return board
 
 
@@ -103,7 +113,6 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
             return board, False
 
     if validate_move(board, startRow, startColumn, endRow, endColumn):
-
         piece = board[startRow][startColumn]
         board[startRow][startColumn] = ". "
 
@@ -113,7 +122,6 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
 
                 if globals.AIGAME:
                     newPiece = "queen"
-                    print("Pawn promoted to Queen")
                 else:
                     newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
 
@@ -137,7 +145,6 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
 
                 if globals.AIGAME:
                     newPiece = "queen"
-                    print("Pawn promoted to Queen")
                 else:
                     newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
 
@@ -1231,44 +1238,50 @@ def checkmate(board, king):
         whiteTurn = False
 
     #check if the king is in check
-    isInCheck = check(board, king)
+    if check(board, king):
 
-    kingRow = -1
-    kingColumn = -1
+        #Get the pos of the king
+        kingRow = -1
+        kingColumn = -1
 
-    for i in range(8):
-        for j in range(8):
-            if board[i][j] == king:
-                kingRow = i
-                kingColumn = j
+        for i in range(8):
+            for j in range(8):
+                if board[i][j] == king:
+                    kingRow = i
+                    kingColumn = j
+                    break
+            if kingRow != -1:
                 break
-        if kingRow != -1:
-            break
 
-    if isInCheck:
         #Get all the moves for the king
         moves = get_moves(board, whiteTurn, kingRow, kingColumn)
 
         #see if there is a move that the king can perform to get out of check
         board[kingRow][kingColumn] = ". "
+        oldPiece = ". "
         for move in moves:
+            oldPiece = board[move[0]][move[1]]
             board[move[0]][move[1]] = king
 
             if not check(board, king):
                 #undo the move
                 board[kingRow][kingColumn] = king
-                board[move[0]][move[1]] = ". "
+                board[move[0]][move[1]] = oldPiece
                 return False
+            board[move[0]][move[1]] = oldPiece
 
         #undo the move
         board[kingRow][kingColumn] = king
-        board[move[0]][move[1]] = ". "
+        board[move[-1][0]][move[-1][1]] = oldPiece
 
         #See if another piece can block the check
         ans = can_check_be_blocked(board, whiteTurn, king)
 
         return not ans
-    return False
+
+    else:
+        print("HERE")
+        return False
 
 
 # Check if the requested move is a castle and if so, make the move
