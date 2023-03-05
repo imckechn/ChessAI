@@ -13,18 +13,16 @@ def create_board():
         ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
         ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
     ]   # A     B     C     D     E     F     G     H
-
     board = [
-        ['wR',   'bR',   'wB',   'wK',   '. ',   'wB',   'bB',   'wR'],
-        ['bR',   'wR',   'bR',   '. ',   '. ',   '. ',   '. ',   '. '],
-        ['. ',   'bR ',   '. ',   '. ',   '. ',   'wP',   '. ',   '. '],
-        ['. ',   '. ',   '. ',   '. ',   'wP',   '. ',   'wP',   'wP'],
+        ['. ',   '. ',   '. ',   '. ',   '. ',   '. ',   'wN',   'wR'],
+        ['. ',   '. ',   'wP',   'wP',   'wB',   'wK',   'wP',   'wP'],
         ['. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. '],
-        ['bP',   '. ',   'bP',   '. ',   'bP',   '. ',   '. ',   '. '],
-        ['. ',   '. ',   '. ',   '. ',   '. ',   'bP',   'bP',   'bP'],
-        ['bR',   'bN',   'bB',   '. ',   'bK',   '. ',   'bN',   'bR']
-    ]
-    # ]   # A     B     C     D     E     F     G     H
+        ['. ',   '. ',   '. ',   '. ',   '. ',   'bP',   '. ',   '. '],
+        ['. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. '],
+        ['bB',   '. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. '],
+        ['. ',   '. ',   'bP',   'bP',   'bP',   '. ',   '. ',   'bP'],
+        ['wR',   '. ',   '. ',   'bQ',   'bK',   'bB',   'bN',   'wB']
+    ]   # A     B     C     D     E     F     G     H
     return board
 
 
@@ -827,10 +825,8 @@ def validate_move(board, startRow, startColumn, endRow, endColumn):
 
         return answer
 
-
     # Conditions for a rook
     elif board[startRow][startColumn] == "wR" or board[startRow][startColumn] == "bR":
-
         #If the rook is moving in the same row
         if startRow == endRow:
             if startColumn < endColumn:
@@ -1206,7 +1202,7 @@ def can_check_be_blocked(board, whiteTurn, king):
         moves = get_moves(board, whiteTurn, piece[1], piece[2])
 
         for move in moves:
-            newBoard = make_move(board, whiteTurn, piece[1], piece[2], move[0], move[1])
+            newBoard, ans = make_move(board, whiteTurn, piece[1], piece[2], move[0], move[1])
 
             if not check(newBoard, king):
                 return True
@@ -1247,7 +1243,7 @@ def checkmate(board, king):
 
         #see if there is a move that the king can perform to get out of check
         for move in moves:
-            newBoard = make_move(board, whiteTurn, kingRow, kingColumn, move[0], move[1])
+            newBoard, ans = make_move(board, whiteTurn, kingRow, kingColumn, move[0], move[1])
 
             if not check(newBoard, king):
                 return False

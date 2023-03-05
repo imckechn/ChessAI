@@ -78,22 +78,19 @@ if userInput == "2p":
             break
 
         #Check if the game is in checkmate or check
-        if whiteTurn:
-            if checkmate(board, "bK"):
-                print("Checkmate! Black wins!")
-                break
+        if checkmate(board, "bK"):
+            print("Checkmate! Black wins!")
+            break
 
-            else:
-                if check(board, "bK"):
-                    print("Black is in check!")
+        elif check(board, "bK"):
+                print("Black is in check!")
 
-        else:
-            if checkmate(board, "wK"):
-                print("Checkmate! White wins!")
-                break
+        if checkmate(board, "wK"):
+            print("Checkmate! White wins!")
+            break
 
-            if check(board, "wK"):
-                    print("White is in check!")
+        elif check(board, "wK"):
+                print("White is in check!")
 
         if whiteTurn:
             print("White's turn!")
@@ -114,6 +111,7 @@ if userInput == "2p":
             board, ans = make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn)
 
             if not ans:
+                print("Invalid move, try again")
                 continue
 
         whiteTurn = not whiteTurn
@@ -155,18 +153,12 @@ else:
         elif check(board, "bK"):
                 print("Black is in check!")
 
-        else:
-            print("Black is not in check!")
-
         if checkmate(board, "wK"):
             print("Checkmate! White wins!")
             break
 
         elif check(board, "wK"):
                 print("White is in check!")
-
-        else:
-            print("White is not in check!")
 
         # If it's the player's turn
         if (player == "w" and whiteTurn) or (player == "b" and not whiteTurn):
