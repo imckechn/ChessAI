@@ -1,2 +1,2 @@
 AIGAME = False
-DEPTH = 4
+DEPTH = 5

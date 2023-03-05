@@ -10,7 +10,7 @@ To play run:
 
 ```python (or python3) endurance.py```
 
-From there it will ask if you want to player 2-player or vs the ai (named TARS).
+From there it will ask if you want to player 2-player or vs the ai (named TARS). Follow the prompts and enjoy!
 
 ## Note
-You can specify the depth of the tree to regulate performance by going into the globals file and changing the DEPTH variable. The default is 3.
+You can specify the max depth of the tree to regulate performance by going into the ```globals.py``` file and changing the DEPTH variable. The default is 5.
