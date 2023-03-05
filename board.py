@@ -113,6 +113,7 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
 
                 if globals.AIGAME:
                     newPiece = "queen"
+                    print("Pawn promoted to Queen")
                 else:
                     newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
 
@@ -136,6 +137,7 @@ def make_move(board, whiteTurn, startRow, startColumn, endRow, endColumn):
 
                 if globals.AIGAME:
                     newPiece = "queen"
+                    print("Pawn promoted to Queen")
                 else:
                     newPiece = input("What piece would you like to promote to (Queen, Rook, Bishop, Knight)? ").lower()
 
@@ -1205,7 +1207,7 @@ def can_check_be_blocked(board, whiteTurn, king):
 # Returns true if the king is in checkmate, false otherwise
 def checkmate(board, king):
 
-    if king == "w":
+    if king == "w" or king == "wK":
         king = "wK"
         whiteTurn = True
     else:
@@ -1232,11 +1234,19 @@ def checkmate(board, king):
         moves = get_moves(board, whiteTurn, kingRow, kingColumn)
 
         #see if there is a move that the king can perform to get out of check
+        board[kingRow][kingColumn] = ". "
         for move in moves:
-            newBoard, ans = make_move(board, whiteTurn, kingRow, kingColumn, move[0], move[1])
+            board[move[0]][move[1]] = king
 
-            if not check(newBoard, king):
+            if not check(board, king):
+                #undo the move
+                board[kingRow][kingColumn] = king
+                board[move[0]][move[1]] = ". "
                 return False
+
+        #undo the move
+        board[kingRow][kingColumn] = king
+        board[move[0]][move[1]] = ". "
 
         #See if another piece can block the check
         ans = can_check_be_blocked(board, whiteTurn, king)

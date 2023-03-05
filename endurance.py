@@ -77,7 +77,7 @@ if userInput == "2p":
             print("Stalemate! Game over!")
             break
 
-        #Check if the game is in checkmate or check
+        # Check if the game is in checkmate or check
         if checkmate(board, "bK"):
             print("Checkmate! Black wins!")
             break
