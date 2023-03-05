@@ -171,6 +171,10 @@ else:
             if userInput == "O-O" or userInput == "O-O-O":
                 board, isCastle = castle(board, whiteTurn, userInput)
 
+                if not isCastle:
+                    print("Invalid castle, try again")
+                    continue
+
             else:
                 try:
                     startRow, startColumn, endRow, endColumn = get_moves_from_user_input(userInput)

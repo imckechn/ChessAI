@@ -13,16 +13,6 @@ def create_board():
         ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'], #7
         ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']  #8
     ]   # A     B     C     D     E     F     G     H
-    board = [
-        ['. ',   '. ',   '. ',   '. ',   '. ',   '. ',   'wN',   'wR'],
-        ['. ',   '. ',   'wP',   'wP',   'wB',   'wK',   'wP',   'wP'],
-        ['. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. '],
-        ['. ',   '. ',   '. ',   '. ',   '. ',   'bP',   '. ',   '. '],
-        ['. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. '],
-        ['bB',   '. ',   '. ',   '. ',   '. ',   '. ',   '. ',   '. '],
-        ['. ',   '. ',   'bP',   'bP',   'bP',   '. ',   '. ',   'bP'],
-        ['wR',   '. ',   '. ',   'bQ',   'bK',   'bB',   'bN',   'wB']
-    ]   # A     B     C     D     E     F     G     H
     return board
 
 
@@ -39,9 +29,9 @@ def print_board(board):
 # @return: The starting row, starting column, the ending row, and then ending column, unless it's castling, in which case it returns "castleRight" or "castleLeft"
 def get_moves_from_user_input(input):
 
-    if input ==  "0-0":
+    if input ==  "O-O":
         return "castleRight"
-    elif input == "0-0-0":
+    elif input == "O-O-O":
         return "castleLeft"
 
     try:
@@ -1274,36 +1264,36 @@ def castle(board, whiteTurn, userInput):
 
     if userInput == "O-O":
         if whiteTurn:
-            if newBoard[7][4] == "wK" and newBoard[7][7] == "wR" and newBoard[7][5] == ". " and newBoard[7][6] == ". ":
-                newBoard[7][4] = ". "
-                newBoard[7][5] = "wK"
-                newBoard[7][6] = "wR"
-                newBoard[7][7] = ". "
+            if newBoard[0][4] == "wK" and newBoard[0][7] == "wR" and newBoard[0][5] == ". " and newBoard[0][6] == ". ":
+                newBoard[0][4] = ". "
+                newBoard[0][5] = "wK"
+                newBoard[0][6] = "wR"
+                newBoard[0][7] = ". "
                 answer = True
 
         else:
-            if newBoard[0][4] == "bK" and newBoard[0][7] == "bR" and newBoard[0][5] == ". " and newBoard[0][6] == ". ":
-                newBoard[0][4] = ". "
-                newBoard[0][5] = "bK"
-                newBoard[0][6] = "bR"
-                newBoard[0][7] = ". "
+            if newBoard[7][4] == "bK" and newBoard[7][7] == "bR" and newBoard[7][5] == ". " and newBoard[7][6] == ". ":
+                newBoard[7][4] = ". "
+                newBoard[7][5] = "bK"
+                newBoard[7][6] = "bR"
+                newBoard[7][7] = ". "
                 answer = True
 
     elif userInput == "O-O-O":
         if whiteTurn:
-            if newBoard[7][4] == "wK" and newBoard[7][0] == "wR" and newBoard[7][1] == ". " and newBoard[7][2] == ". " and newBoard[7][3] == ". ":
-                newBoard[7][4] = ". "
-                newBoard[7][3] = "wK"
-                newBoard[7][2] = "wR"
-                newBoard[7][0] = ". "
+            if newBoard[0][4] == "wK" and newBoard[0][0] == "wR" and newBoard[0][1] == ". " and newBoard[0][2] == ". " and newBoard[0][3] == ". ":
+                newBoard[0][4] = ". "
+                newBoard[0][3] = "wK"
+                newBoard[0][2] = "wR"
+                newBoard[0][0] = ". "
                 answer = True
 
         else:
-            if newBoard[0][4] == "bK" and newBoard[0][0] == "bR" and newBoard[0][1] == ". " and newBoard[0][2] == ". " and newBoard[0][3] == ". ":
-                newBoard[0][4] = ". "
-                newBoard[0][3] = "bK"
-                newBoard[0][2] = "bR"
-                newBoard[0][0] = ". "
+            if newBoard[7][4] == "bK" and newBoard[7][0] == "bR" and newBoard[7][1] == ". " and newBoard[7][2] == ". " and newBoard[7][3] == ". ":
+                newBoard[7][4] = ". "
+                newBoard[7][3] = "bK"
+                newBoard[7][2] = "bR"
+                newBoard[7][0] = ". "
                 answer = True
 
     if answer:
